@@ -27,6 +27,10 @@ class Tile {
         this.selected = true
     }
 
+    unselect() {
+        this.selected = false
+    }
+
     show() {
         switch (this.type) {
             default:
@@ -40,7 +44,10 @@ class Tile {
         if (this.selected) {
             this.windowObj.stroke('#F00')
         }
-        
+        else {
+            this.windowObj.noStroke()
+        }
+
         this.windowObj.rect(this.x, this.y, 20, 20)
     }
 }

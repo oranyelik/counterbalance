@@ -21,5 +21,8 @@ window.keyPressed = () => {
         case RIGHT_ARROW:
             myTile.select()
             break
+        case LEFT_ARROW:
+            myTile.unselect()
+            break
     }
 }

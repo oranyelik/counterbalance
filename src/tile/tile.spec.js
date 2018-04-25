@@ -8,6 +8,7 @@ describe('Tile', () => {
             fill: jest.fn(),
             rect: jest.fn(),
             stroke: jest.fn(),
+            noStroke: jest.fn(),
         }
     })
 
@@ -49,5 +50,18 @@ describe('Tile', () => {
         sut.show()
 
         expect(mockWindow.stroke).toHaveBeenCalled()
+    })
+
+    it('should lose if selection is removed', () => {
+        const sut = new Tile(mockWindow)
+
+        sut.select()
+        sut.show()
+
+        sut.unselect()
+        sut.show()
+
+        expect(mockWindow.stroke).toHaveBeenCalledTimes(1)
+        expect(mockWindow.noStroke).toHaveBeenCalledTimes(1)
     })
 })

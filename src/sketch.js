@@ -5,10 +5,10 @@ const myTile = new Tile(window, 10, 10)
 
 window.setup = () => {
     createCanvas(700, 410)
-    background(0)
 }
 
 window.draw = () => {
+    background(0)   // see: https://github.com/processing/p5.js/issues/2814
     myTile.show()
 }
 

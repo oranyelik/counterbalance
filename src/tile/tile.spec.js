@@ -1,6 +1,16 @@
 const Tile = require('./tile').Tile
 
 describe('Tile', () => {
+    let mockWindow;
+
+    beforeEach(() => {
+        mockWindow = {
+            fill: jest.fn(),
+            rect: jest.fn(),
+            stroke: jest.fn(),
+        }
+    })
+
     it('should exist', () => {
         expect(typeof Tile).toEqual('function')
     })
@@ -22,12 +32,6 @@ describe('Tile', () => {
     })
 
     it('should be a different color once producer is built', () => {
-        let fillWasCalled = false;
-        const mockWindow = {
-            fill: jest.fn(),
-            rect: () => {}
-        }
-
         const sut = new Tile(mockWindow)
         sut.show()
 
@@ -35,5 +39,15 @@ describe('Tile', () => {
         sut.show()
 
         expect(mockWindow.fill.mock.calls[0]).not.toEqual(mockWindow.fill.mock.calls[1])
+    })
+
+    it('should outline if selected', () => {
+        const sut = new Tile(mockWindow)
+        sut.show()
+
+        sut.select()
+        sut.show()
+
+        expect(mockWindow.stroke).toHaveBeenCalled()
     })
 })

@@ -13,5 +13,13 @@ window.draw = () => {
 }
 
 window.keyPressed = () => {
-    myTile.buildProducer()
+    switch (window.keyCode) {
+        case "P".charCodeAt():
+        case "p".charCodeAt():
+            myTile.buildProducer()
+            break
+        case RIGHT_ARROW:
+            myTile.select()
+            break
+    }
 }

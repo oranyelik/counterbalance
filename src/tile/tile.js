@@ -23,6 +23,10 @@ class Tile {
             return this.type.production
     }
 
+    select() {
+        this.selected = true
+    }
+
     show() {
         switch (this.type) {
             default:
@@ -33,6 +37,10 @@ class Tile {
                 break;
         }
 
+        if (this.selected) {
+            this.windowObj.stroke('#F00')
+        }
+        
         this.windowObj.rect(this.x, this.y, 20, 20)
     }
 }

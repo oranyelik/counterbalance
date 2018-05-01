@@ -47,7 +47,7 @@ class Tile {
             this.windowObj.stroke('#F00')
         }
         else {
-            this.windowObj.noStroke()
+            this.windowObj.stroke('#505050')
         }
 
         this.windowObj.rect(this.x, this.y, TileSize, TileSize)

@@ -8,7 +8,7 @@ class Grid {
 
         for (let i = 0; i < width; i++) {
             for (let j = 0; j < height; j++) {
-                this.tiles.push(new Tile(windowObj, i * TileSize, j * TileSize))
+                this.tiles.push(new Tile(windowObj, j * TileSize + (2*j), i * TileSize + (2*i)))
             }
         }
 
@@ -17,6 +17,13 @@ class Grid {
 
     getTiles() {
         return this.tiles
+    }
+
+    /* istanbul ignore next */
+    show() {
+        for (const tile of this.tiles) {
+            tile.show()
+        }
     }
 }
 

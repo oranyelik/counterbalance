@@ -1,28 +1,29 @@
 import 'p5'
-import { Tile } from './tile/tile'
+import { Grid } from './grid/grid'
 
-const myTile = new Tile(window, 10, 10)
+let playableGrid
 
 window.setup = () => {
     createCanvas(700, 410)
+    playableGrid = new Grid(window, 10, 10)
 }
 
 window.draw = () => {
     background(0)   // see: https://github.com/processing/p5.js/issues/2814
-    myTile.show()
+    playableGrid.show()
 }
 
 window.keyPressed = () => {
-    switch (window.keyCode) {
-        case "P".charCodeAt():
-        case "p".charCodeAt():
-            myTile.buildProducer()
-            break
-        case RIGHT_ARROW:
-            myTile.select()
-            break
-        case LEFT_ARROW:
-            myTile.unselect()
-            break
-    }
+    // switch (window.keyCode) {
+    //     case "P".charCodeAt():
+    //     case "p".charCodeAt():
+    //         myTile.buildProducer()
+    //         break
+    //     case RIGHT_ARROW:
+    //         myTile.select()
+    //         break
+    //     case LEFT_ARROW:
+    //         myTile.unselect()
+    //         break
+    // }
 }

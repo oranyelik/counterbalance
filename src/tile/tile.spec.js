@@ -7,8 +7,7 @@ describe('Tile', () => {
         mockWindow = {
             fill: jest.fn(),
             rect: jest.fn(),
-            stroke: jest.fn(),
-            noStroke: jest.fn(),
+            stroke: jest.fn()
         }
     })
 
@@ -56,12 +55,9 @@ describe('Tile', () => {
         const sut = new Tile(mockWindow)
 
         sut.select()
-        sut.show()
+        expect(sut.selected).toBe(true)
 
         sut.unselect()
-        sut.show()
-
-        expect(mockWindow.stroke).toHaveBeenCalledTimes(1)
-        expect(mockWindow.noStroke).toHaveBeenCalledTimes(1)
+        expect(sut.selected).toBe(false)
     })
 })

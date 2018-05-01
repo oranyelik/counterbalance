@@ -4,6 +4,8 @@ const types = {
     }
 }
 
+const TileSize = 20
+
 class Tile {
     constructor(windowObj, x, y) {
         this.windowObj = windowObj
@@ -48,8 +50,11 @@ class Tile {
             this.windowObj.noStroke()
         }
 
-        this.windowObj.rect(this.x, this.y, 20, 20)
+        this.windowObj.rect(this.x, this.y, TileSize, TileSize)
     }
 }
 
-module.exports.Tile = Tile
+module.exports = {
+    Tile,
+    TileSize
+}

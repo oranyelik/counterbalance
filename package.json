@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config ./webpack.config.js",
     "clean": "rm -rf ./node_modules/ && rm -rf ./dist/ && rm -rf ./coverage/",
-    "start": "webpack-serve --open-path ./dist/ --open",
+    "start": "npm run build && webpack-serve --open-path ./dist/ --open",
     "test": "jest",
     "watch": "jest --watch",
     "postinstall": "nsp check"
@@ -18,8 +18,7 @@
   "keywords": [
     "game",
     "strategy",
-    "p5",
-    "typescript"
+    "p5"
   ],
   "author": "oranyelik",
   "license": "UNLICENSED",

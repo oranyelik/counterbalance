@@ -18,6 +18,10 @@ class Grid {
         this.selectedTileIndex = 0
     }
 
+    buildProducer() {
+        return this.tiles[this.selectedTileIndex].buildProducer()
+    }
+
     getTiles() {
         return this.tiles
     }

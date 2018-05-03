@@ -15,10 +15,10 @@ window.draw = () => {
 
 window.keyPressed = () => {
     switch (window.keyCode) {
-        // case "P".charCodeAt():
-        // case "p".charCodeAt():
-        //     myTile.buildProducer()
-        //     break
+        case "P".charCodeAt():
+        case "p".charCodeAt():
+            playableGrid.buildProducer()
+            break
         case UP_ARROW:
             playableGrid.moveUp()
             break

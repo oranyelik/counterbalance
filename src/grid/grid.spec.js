@@ -70,4 +70,14 @@ describe('Grid', () => {
         expect(tiles[2].selected).toBe(false)
         expect(tiles[0].selected).toBe(true)
     })
+
+    it('should build producer on selected tile', () => {
+        const sut = new Grid({}, 1, 1)
+
+        const firstAttemptResult = sut.buildProducer()
+        expect(firstAttemptResult).toBeTruthy()
+
+        const secondAttemptResult = sut.buildProducer()
+        expect(secondAttemptResult).toBeFalsy()
+    })
 })

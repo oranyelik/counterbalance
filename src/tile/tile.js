@@ -1,33 +1,4 @@
-// consider moving hotkey / color for each type into this structure; consider extracting to separate file
-// ^ this would improve our open/closed principle adherence!
-const types = {
-    producer: {
-        cost: 60,
-        buildTime: 10,
-        health: 100,
-        production: 10
-    },
-    army: {
-        cost: 80,
-        buildTime: 10,
-        health: 120,
-        damage: {
-            adjacent: 20,
-            nextNeighbor: 10
-        }
-    },
-    defense: {
-        cost: 40,
-        buildTime: 4,
-        health: 80
-    },
-    research: {
-        cost: 110,
-        buildTime: 18,
-        health: 90,
-        boost: 1.1
-    }
-}
+const Types = require('./types').Types
 
 const TileSize = 20
 
@@ -38,36 +9,31 @@ class Tile {
         this.y = y
     }
 
-    buildProducer() {
+    buildStructure(buildingType) {
         if (this.type)
             return false;
 
-        return this.type = types.producer
+        return this.type = buildingType
+    }
+
+    buildProducer() {
+        return this.buildStructure(Types.producer)
     }
 
     buildArmy() {
-        if (this.type)
-            return false;
-
-        return this.type = types.army
+        return this.buildStructure(Types.army)
     }
 
     buildDefense() {
-        if (this.type)
-            return false;
-
-        return this.type = types.defense
+        return this.buildStructure(Types.defense)
     }
 
     buildResearch() {
-        if (this.type)
-            return false;
-
-        return this.type = types.research
+        return this.buildStructure(Types.research)
     }
 
     produce() {
-        if (this.type === types.producer)
+        if (this.type === Types.producer)
             return this.type.production
     }
 
@@ -80,13 +46,11 @@ class Tile {
     }
 
     show() {
-        switch (this.type) {
-            default:
-                this.windowObj.fill('#FFF')
-                break;
-            case types.producer:
-                this.windowObj.fill('#0F0')
-                break;
+        if (this.type) {
+            this.windowObj.fill(this.type.color)
+        }
+        else {
+            this.windowObj.fill('#FFF')
         }
 
         if (this.selected) {

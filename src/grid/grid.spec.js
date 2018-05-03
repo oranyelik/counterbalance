@@ -74,10 +74,10 @@ describe('Grid', () => {
     it('should build producer on selected tile', () => {
         const sut = new Grid({}, 1, 1)
 
-        const firstAttemptResult = sut.buildProducer()
+        const firstAttemptResult = sut.buildStructure({})
         expect(firstAttemptResult).toBeTruthy()
 
-        const secondAttemptResult = sut.buildProducer()
+        const secondAttemptResult = sut.buildStructure({})
         expect(secondAttemptResult).toBeFalsy()
     })
 })

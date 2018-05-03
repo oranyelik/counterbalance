@@ -38,6 +38,7 @@ describe('Tile', () => {
         sut.buildProducer()
         sut.show()
 
+        expect(mockWindow.fill).toHaveBeenCalledTimes(2)
         expect(mockWindow.fill.mock.calls[0]).not.toEqual(mockWindow.fill.mock.calls[1])
     })
 

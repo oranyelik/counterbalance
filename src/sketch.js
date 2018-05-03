@@ -1,5 +1,6 @@
 import 'p5'
 import { Grid } from './grid/grid'
+import { Types } from './tile/types'
 
 let playableGrid
 
@@ -15,9 +16,17 @@ window.draw = () => {
 
 window.keyPressed = () => {
     switch (window.keyCode) {
-        case "P".charCodeAt():
-        case "p".charCodeAt():
-            playableGrid.buildProducer()
+        case Types.producer.hotkey.charCodeAt():
+            playableGrid.buildStructure(Types.producer)
+            break
+        case Types.army.hotkey.charCodeAt():
+            playableGrid.buildStructure(Types.army)
+            break
+        case Types.defense.hotkey.charCodeAt():
+            playableGrid.buildStructure(Types.defense)
+            break
+        case Types.research.hotkey.charCodeAt():
+            playableGrid.buildStructure(Types.research)
             break
         case UP_ARROW:
             playableGrid.moveUp()

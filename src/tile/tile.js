@@ -1,6 +1,31 @@
+// consider moving hotkey / color for each type into this structure; consider extracting to separate file
+// ^ this would improve our open/closed principle adherence!
 const types = {
     producer: {
+        cost: 60,
+        buildTime: 10,
+        health: 100,
         production: 10
+    },
+    army: {
+        cost: 80,
+        buildTime: 10,
+        health: 120,
+        damage: {
+            adjacent: 20,
+            nextNeighbor: 10
+        }
+    },
+    defense: {
+        cost: 40,
+        buildTime: 4,
+        health: 80
+    },
+    research: {
+        cost: 110,
+        buildTime: 18,
+        health: 90,
+        boost: 1.1
     }
 }
 
@@ -18,6 +43,27 @@ class Tile {
             return false;
 
         return this.type = types.producer
+    }
+
+    buildArmy() {
+        if (this.type)
+            return false;
+
+        return this.type = types.army
+    }
+
+    buildDefense() {
+        if (this.type)
+            return false;
+
+        return this.type = types.defense
+    }
+
+    buildResearch() {
+        if (this.type)
+            return false;
+
+        return this.type = types.research
     }
 
     produce() {

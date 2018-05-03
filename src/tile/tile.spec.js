@@ -60,4 +60,25 @@ describe('Tile', () => {
         sut.unselect()
         expect(sut.selected).toBe(false)
     })
+
+    it('should build army', () => {
+        const sut = new Tile()
+
+        expect(sut.buildArmy()).toBeTruthy()
+        expect(sut.buildArmy()).toBeFalsy()
+    })
+
+    it('should build defense', () => {
+        const sut = new Tile()
+
+        expect(sut.buildDefense()).toBeTruthy()
+        expect(sut.buildDefense()).toBeFalsy()
+    })
+
+    it('should build research', () => {
+        const sut = new Tile()
+
+        expect(sut.buildResearch()).toBeTruthy()
+        expect(sut.buildResearch()).toBeFalsy()
+    })
 })

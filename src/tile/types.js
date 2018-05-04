@@ -1,7 +1,7 @@
 module.exports.Types = {
     producer: {
         color: '#0F0',
-        hotkey: 'p',
+        hotkey: 'P',
         cost: 60,
         buildTime: 10,
         health: 100,
@@ -9,7 +9,7 @@ module.exports.Types = {
     },
     army: {
         color: '#F00',
-        hotkey: 'a',
+        hotkey: 'A',
         cost: 80,
         buildTime: 10,
         health: 120,
@@ -20,14 +20,14 @@ module.exports.Types = {
     },
     defense: {
         color: '#00F',
-        hotkey: 'd',
+        hotkey: 'D',
         cost: 40,
         buildTime: 4,
         health: 80
     },
     research: {
         color: '#8E44AD',
-        hotkey: 'r',
+        hotkey: 'R',
         cost: 110,
         buildTime: 18,
         health: 90,

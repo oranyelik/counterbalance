@@ -16,26 +16,28 @@ describe('Tile', () => {
     })
 
     it('should build producer', () => {
+        const mockProducerType = {
+            production: 5
+        }
         const sut = new Tile()
-        expect(sut.produce()).toBeFalsy()
 
-        expect(sut.buildProducer()).toBeTruthy()
+        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
         expect(sut.produce()).toBeTruthy()
     })
 
     it('should not build producer if building already exists', () => {
         const sut = new Tile()
 
-        sut.buildProducer()
+        sut.buildStructure({})
 
-        expect(sut.buildProducer()).toBeFalsy()
+        expect(sut.buildStructure({})).toBeFalsy()
     })
 
     it('should be a different color once producer is built', () => {
         const sut = new Tile(mockWindow)
         sut.show()
 
-        sut.buildProducer()
+        sut.buildStructure({})
         sut.show()
 
         expect(mockWindow.fill).toHaveBeenCalledTimes(2)
@@ -60,26 +62,5 @@ describe('Tile', () => {
 
         sut.unselect()
         expect(sut.selected).toBe(false)
-    })
-
-    it('should build army', () => {
-        const sut = new Tile()
-
-        expect(sut.buildArmy()).toBeTruthy()
-        expect(sut.buildArmy()).toBeFalsy()
-    })
-
-    it('should build defense', () => {
-        const sut = new Tile()
-
-        expect(sut.buildDefense()).toBeTruthy()
-        expect(sut.buildDefense()).toBeFalsy()
-    })
-
-    it('should build research', () => {
-        const sut = new Tile()
-
-        expect(sut.buildResearch()).toBeTruthy()
-        expect(sut.buildResearch()).toBeFalsy()
     })
 })

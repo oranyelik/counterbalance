@@ -15,4 +15,25 @@ describe('Player', () => {
 
         expect(sut.getGold()).toBe(10)
     })
+
+    it('should only allow construction of a structure if they have enough money banked', () => {
+        const mockStructure = {
+            cost: 60
+        }
+        const mockGrid = {
+            buildStructure: jest.fn((() => true))
+        }
+        const sut = new Player()
+
+        sut.addGold(50)
+
+        expect(sut.build(mockStructure, mockGrid)).toBe(false)
+        expect(mockGrid.buildStructure).not.toHaveBeenCalled()
+
+        sut.addGold(10)
+
+        expect(sut.build(mockStructure, mockGrid)).toBe(true)
+        expect(mockGrid.buildStructure).toHaveBeenCalled()
+        expect(sut.getGold()).toBe(0)
+    })
 })

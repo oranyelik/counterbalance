@@ -16,25 +16,8 @@ class Tile {
         return this.type = buildingType
     }
 
-    buildProducer() {
-        return this.buildStructure(Types.producer)
-    }
-
-    buildArmy() {
-        return this.buildStructure(Types.army)
-    }
-
-    buildDefense() {
-        return this.buildStructure(Types.defense)
-    }
-
-    buildResearch() {
-        return this.buildStructure(Types.research)
-    }
-
     produce() {
-        if (this.type === Types.producer)
-            return this.type.production
+        return this.type.production
     }
 
     select() {

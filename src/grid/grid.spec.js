@@ -80,4 +80,30 @@ describe('Grid', () => {
         const secondAttemptResult = sut.buildStructure({})
         expect(secondAttemptResult).toBeFalsy()
     })
+
+    it('should add player gold on producer tick', () => {
+        const mockPlayer = {
+            addGold: amount => {
+                if (!this.gold) 
+                    this.gold = amount
+                else
+                    this.gold += amount
+            },
+            getGold: () => this.gold || 0
+        }
+        const mockProducerType = {
+            cost: 0,
+            production: 10
+        }
+        const sut = new Grid({}, 1, 1)
+
+        sut.update(mockPlayer)
+
+        expect(mockPlayer.getGold()).toBe(0)
+
+        sut.buildStructure(mockProducerType)
+        sut.update(mockPlayer)
+        
+        expect(mockPlayer.getGold()).toBe(mockProducerType.production)
+    })
 })

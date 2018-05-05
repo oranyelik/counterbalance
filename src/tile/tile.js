@@ -1,5 +1,3 @@
-const Types = require('./types').Types
-
 const TileSize = 20
 
 class Tile {
@@ -14,10 +12,6 @@ class Tile {
             return false;
 
         return this.type = buildingType
-    }
-
-    produce() {
-        return this.type.production
     }
 
     select() {

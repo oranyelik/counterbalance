@@ -3,6 +3,8 @@ import { Grid } from './grid/grid'
 import { Types } from './tile/types'
 import { Player } from './player/player'
 
+const framesPerSecond = 10
+
 let playableGrid
 let player
 
@@ -10,12 +12,17 @@ window.setup = () => {
     createCanvas(700, 410)
     playableGrid = new Grid(window, 10, 10)
     player = new Player()
+    frameRate(framesPerSecond)
 }
 
 window.draw = () => {
     background(0)   // see: https://github.com/processing/p5.js/issues/2814
     playableGrid.show()
     showPlayerGold()
+
+    if (frameCount % framesPerSecond === 0) {
+        playableGrid.update(player)
+    }
 }
 
 window.keyPressed = () => {
@@ -52,6 +59,7 @@ window.keyPressed = () => {
 
 function showPlayerGold() {
     fill('#FFF')
+    noStroke()
     text('Player 1 Gold:', 300, 10, 80, 80)
     textAlign(RIGHT)
     text(player.getGold(), 300, 20, 80, 80)

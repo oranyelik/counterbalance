@@ -22,7 +22,6 @@ describe('Tile', () => {
         const sut = new Tile()
 
         expect(sut.buildStructure(mockProducerType)).toBeTruthy()
-        expect(sut.produce()).toBeTruthy()
     })
 
     it('should not build producer if building already exists', () => {

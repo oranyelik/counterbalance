@@ -64,6 +64,19 @@ class Grid {
             tile.show()
         }
     }
+
+    update(player) {
+        let newGold = 0
+
+        for (const tile of this.tiles) {
+            if (!tile.type)
+                continue;
+
+            newGold += tile.type.production
+        }
+
+        player.addGold(newGold)
+    }
 }
 
 module.exports = {

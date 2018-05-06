@@ -72,7 +72,8 @@ class Grid {
             if (!tile.type)
                 continue;
 
-            newGold += tile.type.production
+            // TODO: don't give gold if building is still in production
+            newGold += tile.type.production || 0
         }
 
         player.addGold(newGold)

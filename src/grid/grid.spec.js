@@ -72,7 +72,10 @@ describe('Grid', () => {
     })
 
     it('should build producer on selected tile', () => {
-        const sut = new Grid({}, 1, 1)
+        const mockWindow = {
+            frameRate: () => 1,
+        }
+        const sut = new Grid(mockWindow, 1, 1)
 
         const firstAttemptResult = sut.buildStructure({})
         expect(firstAttemptResult).toBeTruthy()
@@ -82,6 +85,9 @@ describe('Grid', () => {
     })
 
     it('should add player gold on producer tick', () => {
+        const mockWindow = {
+            frameRate: () => 1,
+        }
         const mockPlayer = {
             addGold: amount => {
                 if (!this.gold) 
@@ -95,7 +101,7 @@ describe('Grid', () => {
             cost: 0,
             production: 10
         }
-        const sut = new Grid({}, 1, 1)
+        const sut = new Grid(mockWindow, 1, 1)
 
         sut.update(mockPlayer)
 

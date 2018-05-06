@@ -11,6 +11,8 @@ class Tile {
         if (this.type)
             return false;
 
+        this.buildingCompleteFrame = this.windowObj.frameCount + (this.windowObj.frameRate() * buildingType.buildTime)
+
         return this.type = buildingType
     }
 
@@ -24,7 +26,14 @@ class Tile {
 
     show() {
         if (this.type) {
-            this.windowObj.fill(this.type.color)
+            let tileColor = this.type.color
+
+            if (this.windowObj.frameCount < this.buildingCompleteFrame) {
+                // TODO: ease into color by adjusting the alpha in increments of 10% as structure approaches completion
+                tileColor = tileColor.replace('rgb(', 'rgba(').replace(')', ',0.5)')
+            }
+
+            this.windowObj.fill(tileColor)
         }
         else {
             this.windowObj.fill('#FFF')

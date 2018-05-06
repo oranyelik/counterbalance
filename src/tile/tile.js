@@ -29,8 +29,7 @@ class Tile {
             let tileColor = this.type.color
 
             if (this.windowObj.frameCount < this.buildingCompleteFrame) {
-                // TODO: ease into color by adjusting the alpha in increments of 10% as structure approaches completion
-                tileColor = tileColor.replace('rgb(', 'rgba(').replace(')', ',0.5)')
+                tileColor = tileColor.replace('rgb(', 'rgba(').replace(')', `,${this.getStructureColorAlpha()})`)
             }
 
             this.windowObj.fill(tileColor)
@@ -47,6 +46,28 @@ class Tile {
         }
 
         this.windowObj.rect(this.x, this.y, TileSize, TileSize)
+    }
+
+    getStructureColorAlpha() {
+        const buildFramesRemaining = this.buildingCompleteFrame - this.windowObj.frameCount
+        const totalFramesToBuild = this.type.buildTime * this.windowObj.frameRate()
+        const progressPercent = 100 - (buildFramesRemaining / totalFramesToBuild) * 100
+
+        if (progressPercent < 20) {
+            return 0.15
+        }
+        else if (progressPercent < 40) {
+            return 0.35
+        }
+        else if (progressPercent < 60) {
+            return 0.55
+        }
+        else if (progressPercent < 80) {
+            return 0.75
+        }
+        else {
+            return 0.95
+        }
     }
 }
 

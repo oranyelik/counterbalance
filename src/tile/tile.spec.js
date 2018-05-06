@@ -86,6 +86,43 @@ describe('Tile', () => {
         expect(mockWindow.fill.mock.calls[1]).not.toEqual(mockWindow.fill.mock.calls[2])
     })
 
+    it('should progress color transparency while building', () => {
+        const mockStructureType = {
+            production: 5,
+            buildTime: 5,
+            color: 'rgb(255,255,255)'
+        }
+        const sut = new Tile(mockWindow)
+        
+        sut.buildStructure(mockStructureType)
+        
+        sut.show()
+        mockWindow.frameCount += 1
+        sut.show()
+
+        expect(mockWindow.fill.mock.calls[1]).not.toEqual(mockWindow.fill.mock.calls[0])
+        
+        mockWindow.frameCount += 1
+        sut.show()
+        expect(mockWindow.fill.mock.calls[2]).not.toEqual(mockWindow.fill.mock.calls[1])
+
+        mockWindow.frameCount += 1
+        sut.show()
+        expect(mockWindow.fill.mock.calls[3]).not.toEqual(mockWindow.fill.mock.calls[2])
+
+        mockWindow.frameCount += 1
+        sut.show()
+        expect(mockWindow.fill.mock.calls[4]).not.toEqual(mockWindow.fill.mock.calls[3])
+
+        mockWindow.frameCount += 1
+        sut.show()
+        expect(mockWindow.fill.mock.calls[5]).not.toEqual(mockWindow.fill.mock.calls[4])
+
+        mockWindow.frameCount += 1
+        sut.show()
+        expect(mockWindow.fill.mock.calls[6]).toEqual(mockWindow.fill.mock.calls[5])
+    })
+
     it('should not produce while building')
     // grid will check, show will update isBuilding status?
 })

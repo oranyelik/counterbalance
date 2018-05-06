@@ -1,6 +1,29 @@
 const Grid = require('./grid').Grid
 
 describe('Grid', () => {
+    let mockWindow, mockPlayer, mockProducerType
+
+    beforeEach(() => {
+        mockWindow = {
+            frameCount: 0,
+            frameRate: () => 1
+        }
+        mockPlayer = {
+            addGold: amount => {
+                if (!this.gold)
+                    this.gold = amount
+                else
+                    this.gold += amount
+            },
+            getGold: () => this.gold || 0
+        }
+        mockProducerType = {
+            cost: 0,
+            production: 10,
+            buildTime: 5
+        }
+    })
+
     it('should select 0, 0 tile', () => {
         const sut = new Grid({}, 1, 1)
 
@@ -72,9 +95,6 @@ describe('Grid', () => {
     })
 
     it('should build producer on selected tile', () => {
-        const mockWindow = {
-            frameRate: () => 1,
-        }
         const sut = new Grid(mockWindow, 1, 1)
 
         const firstAttemptResult = sut.buildStructure({})
@@ -84,32 +104,20 @@ describe('Grid', () => {
         expect(secondAttemptResult).toBeFalsy()
     })
 
-    it('should add player gold on producer tick', () => {
-        const mockWindow = {
-            frameRate: () => 1,
-        }
-        const mockPlayer = {
-            addGold: amount => {
-                if (!this.gold) 
-                    this.gold = amount
-                else
-                    this.gold += amount
-            },
-            getGold: () => this.gold || 0
-        }
-        const mockProducerType = {
-            cost: 0,
-            production: 10
-        }
+    it('should only add player gold after producer finishes construction', () => {
         const sut = new Grid(mockWindow, 1, 1)
 
         sut.update(mockPlayer)
-
         expect(mockPlayer.getGold()).toBe(0)
 
         sut.buildStructure(mockProducerType)
+
         sut.update(mockPlayer)
-        
+        expect(mockPlayer.getGold()).toBe(0)
+
+        mockWindow.frameCount += mockProducerType.buildTime
+
+        sut.update(mockPlayer)
         expect(mockPlayer.getGold()).toBe(mockProducerType.production)
     })
 })

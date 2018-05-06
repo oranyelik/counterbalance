@@ -3,7 +3,7 @@ const TileSize = require('../tile/tile').TileSize
 
 class Grid {
     constructor(windowObj, width, height) {
-        this.windowObj
+        this.windowObj = windowObj
         this.width = width
         this.height = height
         this.tiles = []
@@ -72,8 +72,8 @@ class Grid {
             if (!tile.type)
                 continue;
 
-            // TODO: don't give gold if building is still in production
-            newGold += tile.type.production || 0
+            if (this.windowObj.frameCount >= tile.buildingCompleteFrame && tile.type.production)
+                newGold += tile.type.production
         }
 
         player.addGold(newGold)

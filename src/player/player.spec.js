@@ -1,4 +1,5 @@
 const Player = require('./player').Player
+const PlayerTypes = require('./player').PlayerTypes
 
 describe('Player', () => {
     it('should exist', () => {
@@ -35,5 +36,20 @@ describe('Player', () => {
         expect(sut.build(mockStructure, mockGrid)).toBe(true)
         expect(mockGrid.buildStructure).toHaveBeenCalled()
         expect(sut.getGold()).toBe(0)
+    })
+
+    it('should build enemy tiles for enemy player', () => {
+        const mockStructure = {
+            cost: 10
+        }
+        const mockGrid = {
+            buildStructure: jest.fn((() => true))
+        }
+        const sut = new Player(true)
+
+        sut.addGold(10)
+        sut.build(mockStructure, mockGrid)
+
+        expect(mockGrid.buildStructure).toHaveBeenCalledWith(mockStructure, true)
     })
 })

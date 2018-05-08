@@ -1,15 +1,17 @@
 const Tile = require('./tile').Tile
 
 describe('Tile', () => {
-    let mockWindow;
+    let mockWindow
 
     beforeEach(() => {
         mockWindow = {
             frameCount: 0,
             frameRate: () => 1,
+            text: jest.fn(),
             fill: jest.fn(),
             rect: jest.fn(),
-            stroke: jest.fn()
+            stroke: jest.fn(),
+            strokeWeight: () => {}
         }
     })
 
@@ -123,6 +125,31 @@ describe('Tile', () => {
         expect(mockWindow.fill.mock.calls[6]).toEqual(mockWindow.fill.mock.calls[5])
     })
 
-    it('should not produce while building')
-    // grid will check, show will update isBuilding status?
+    it('should not show an x for player 1 tiles', () => {
+        const mockStructureType = {
+            production: 5,
+            buildTime: 5,
+            color: 'rgb(255,255,255)'
+        }
+        const sut = new Tile(mockWindow)
+        
+        sut.buildStructure(mockStructureType)
+        
+        sut.show()
+        expect(mockWindow.text).not.toHaveBeenCalled()
+    })
+
+    it('should show an x for player 2 tiles', () => {
+        const mockStructureType = {
+            production: 5,
+            buildTime: 5,
+            color: 'rgb(255,255,255)'
+        }
+        const sut = new Tile(mockWindow)
+        
+        sut.buildStructure(mockStructureType, true)
+        
+        sut.show()
+        expect(mockWindow.text).toHaveBeenCalled()
+    })
 })

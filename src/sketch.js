@@ -6,12 +6,13 @@ import { Player } from './player/player'
 const framesPerSecond = 10
 
 let playableGrid
-let player
+const players = []
 
 window.setup = () => {
-    createCanvas(700, 410)
-    playableGrid = new Grid(window, 10, 10)
-    player = new Player()
+    createCanvas(600, 450)
+    playableGrid = new Grid(window, 20, 20)
+    players[0] = new Player()
+    players[1] = new Player(true)
     frameRate(framesPerSecond)
 }
 
@@ -21,11 +22,14 @@ window.draw = () => {
     showPlayerGold()
 
     if (frameCount % framesPerSecond === 0) {
-        playableGrid.update(player)
+        playableGrid.update(players)
     }
 }
 
 window.keyPressed = () => {
+    // add shift support for player 2 so we can verify the X's appear!
+    const player = !keyIsDown(SHIFT) ? players[0] : players[1]
+
     switch (window.keyCode) {
         case ' '.charCodeAt():
             player.addGold(250)
@@ -60,7 +64,14 @@ window.keyPressed = () => {
 function showPlayerGold() {
     fill('#FFF')
     noStroke()
-    text('Player 1 Gold:', 300, 10, 80, 80)
+    
+    textAlign(LEFT)
+    text('Player 1 Gold:', 500, 10, 80, 80)
     textAlign(RIGHT)
-    text(player.getGold(), 300, 20, 80, 80)
+    text(players[0].getGold(), 500, 20, 80, 80)
+
+    textAlign(LEFT)
+    text('Player 2 Gold:', 500, 40, 80, 80)
+    textAlign(RIGHT)
+    text(players[1].getGold(), 500, 50, 80, 80)
 }

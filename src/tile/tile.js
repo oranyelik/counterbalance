@@ -7,11 +7,15 @@ class Tile {
         this.y = y
     }
 
-    buildStructure(buildingType) {
+    buildStructure(buildingType, isEnemy) {
         if (this.type)
-            return false;
+            return false
 
         this.buildingCompleteFrame = this.windowObj.frameCount + (this.windowObj.frameRate() * buildingType.buildTime)
+
+        if (isEnemy) {
+            this.isEnemy = isEnemy
+        }
 
         return this.type = buildingType
     }
@@ -46,6 +50,13 @@ class Tile {
         }
 
         this.windowObj.rect(this.x, this.y, TileSize, TileSize)
+
+        if (this.isEnemy) {
+            this.windowObj.fill('#FFF')
+            this.windowObj.strokeWeight(2)
+            this.windowObj.stroke('#000')
+            this.windowObj.text('X', this.x + (TileSize * .75) - 1, this.y + (TileSize * .75) - 1)
+        }
     }
 
     getStructureColorAlpha() {

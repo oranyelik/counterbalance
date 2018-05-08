@@ -10,7 +10,7 @@ class Grid {
 
         for (let i = 0; i < width; i++) {
             for (let j = 0; j < height; j++) {
-                this.tiles.push(new Tile(windowObj, j * TileSize + (2*j), i * TileSize + (2*i)))
+                this.tiles.push(new Tile(windowObj, j * TileSize + (2*j) + 2, i * TileSize + (2*i) + 2))
             }
         }
 
@@ -18,8 +18,8 @@ class Grid {
         this.selectedTileIndex = 0
     }
 
-    buildStructure(type) {
-        return this.tiles[this.selectedTileIndex].buildStructure(type)
+    buildStructure(type, isEnemy) {
+        return this.tiles[this.selectedTileIndex].buildStructure(type, isEnemy)
     }
 
     getTiles() {
@@ -58,25 +58,29 @@ class Grid {
         }
     }
 
+    update(players) {
+        for (const tile of this.tiles) {
+            if (!tile.type)
+                continue;
+
+            if (this.windowObj.frameCount >= tile.buildingCompleteFrame && tile.type.production) {
+                if (tile.isEnemy) {
+                    players[1].addGold(tile.type.production)
+                }
+                else {
+                    players[0].addGold(tile.type.production)
+                }
+            }
+
+            // TODO: health / damage (.adjacent, .nextNeighbor), boost
+        }
+    }
+
     /* istanbul ignore next */
     show() {
         for (const tile of this.tiles) {
             tile.show()
         }
-    }
-
-    update(player) {
-        let newGold = 0
-
-        for (const tile of this.tiles) {
-            if (!tile.type)
-                continue;
-
-            if (this.windowObj.frameCount >= tile.buildingCompleteFrame && tile.type.production)
-                newGold += tile.type.production
-        }
-
-        player.addGold(newGold)
     }
 }
 

@@ -1,22 +1,32 @@
 const Grid = require('./grid').Grid
 
 describe('Grid', () => {
-    let mockWindow, mockPlayer, mockProducerType
+    const mockPlayer = {
+        addGold: amount => {
+            this.gold += amount
+        },
+        getGold: () => this.gold
+    }
+    const mockEnemy = {
+        isEnemy: true,
+        addGold: amount => {
+            this.enemyGold += amount
+        },
+        getGold: () => this.enemyGold
+    }
+
+    const mockPlayers = [mockPlayer, mockEnemy]
+    let mockWindow, mockProducerType
 
     beforeEach(() => {
+        this.gold = 0
+        this.enemyGold = 0
+
         mockWindow = {
             frameCount: 0,
             frameRate: () => 1
         }
-        mockPlayer = {
-            addGold: amount => {
-                if (!this.gold)
-                    this.gold = amount
-                else
-                    this.gold += amount
-            },
-            getGold: () => this.gold || 0
-        }
+        
         mockProducerType = {
             cost: 0,
             production: 10,
@@ -107,17 +117,33 @@ describe('Grid', () => {
     it('should only add player gold after producer finishes construction', () => {
         const sut = new Grid(mockWindow, 1, 1)
 
-        sut.update(mockPlayer)
-        expect(mockPlayer.getGold()).toBe(0)
+        sut.update(mockPlayers)
+        expect(mockPlayers[0].getGold()).toBe(0)
 
         sut.buildStructure(mockProducerType)
 
-        sut.update(mockPlayer)
-        expect(mockPlayer.getGold()).toBe(0)
+        sut.update(mockPlayers)
+        expect(mockPlayers[0].getGold()).toBe(0)
 
         mockWindow.frameCount += mockProducerType.buildTime
 
-        sut.update(mockPlayer)
-        expect(mockPlayer.getGold()).toBe(mockProducerType.production)
+        sut.update(mockPlayers)
+        expect(mockPlayers[0].getGold()).toBe(mockProducerType.production)
+    })
+
+    it('should add gold to player 2 if tile is enemy tile', () => {
+        const sut = new Grid(mockWindow, 1, 1)
+
+        expect(mockPlayers[0].getGold()).toBe(0)
+        expect(mockPlayers[1].getGold()).toBe(0)
+
+        sut.buildStructure(mockProducerType, true)
+
+        mockWindow.frameCount += mockProducerType.buildTime
+
+        sut.update(mockPlayers)
+
+        expect(mockPlayers[0].getGold()).toBe(0)
+        expect(mockPlayers[1].getGold()).toBe(mockProducerType.production)
     })
 })

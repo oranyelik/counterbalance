@@ -14,8 +14,7 @@ module.exports.Types = Object.freeze({
         buildTime: 10,
         health: 120,
         damage: {
-            adjacent: 20,
-            nextNeighbor: 10
+            adjacent: 20
         }
     },
     defense: {

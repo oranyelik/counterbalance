@@ -8,6 +8,7 @@ const framesPerSecond = 10
 let playableGrid
 const players = []
 
+// TODO: Start with an enemy tile that can be destroyed
 window.setup = () => {
     createCanvas(600, 450)
     playableGrid = new Grid(window, 20, 20)

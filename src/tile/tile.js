@@ -17,6 +17,8 @@ class Tile {
             this.isEnemy = isEnemy
         }
 
+        this.health = buildingType.health
+
         return this.type = buildingType
     }
 

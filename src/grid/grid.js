@@ -59,20 +59,82 @@ class Grid {
     }
 
     update(players) {
-        for (const tile of this.tiles) {
-            if (!tile.type)
-                continue;
+        for (let i = 0; i < this.tiles.length; i++) {
+            const tile = this.tiles[i]
 
-            if (this.windowObj.frameCount >= tile.buildingCompleteFrame && tile.type.production) {
-                if (tile.isEnemy) {
-                    players[1].addGold(tile.type.production)
+            if (!tile.type)
+                continue
+
+            if (this.windowObj.frameCount >= tile.buildingCompleteFrame) {
+                if (tile.type.production) {
+                    if (tile.isEnemy) {
+                        players[1].addGold(tile.type.production)
+                    }
+                    else {
+                        players[0].addGold(tile.type.production)
+                    }
                 }
-                else {
-                    players[0].addGold(tile.type.production)
+                else if (tile.type.damage) {
+                    this.applyDamage(i, tile.type.damage)
                 }
             }
 
-            // TODO: health / damage (.adjacent, .nextNeighbor), boost
+            // TODO: apply boost mechanics from research
+        }
+    }
+
+    applyDamage(damagingTileIndex, nearbyTileDamage) {
+        const tilesToBeDamaged = this.findDamageableTiles(damagingTileIndex)
+
+        for (const damagedTile of tilesToBeDamaged.adjacent) {
+            damagedTile.health -= nearbyTileDamage.adjacent
+        }
+
+        // TODO: destroy structures with 0 health
+    }
+
+    // TODO: damage tiles in corners in addition to up/down/left/right
+    findDamageableTiles(damagingTileIndex) {
+        const adjacentTiles = []
+
+        // north adjacent
+        if (damagingTileIndex - this.width >= 0) {
+            const potentialTile = this.tiles[damagingTileIndex - this.width]
+            
+            if (potentialTile.health) {
+                adjacentTiles.push(potentialTile)
+            }
+        }
+
+        // right adjacent
+        if ((damagingTileIndex + 1) % this.width > 0) {
+            const potentialTile = this.tiles[damagingTileIndex + 1]
+            
+            if (potentialTile.health) {
+                adjacentTiles.push(potentialTile)
+            }
+        }
+
+        // south adjacent
+        if (damagingTileIndex + this.width < this.tiles.length) {
+            const potentialTile = this.tiles[damagingTileIndex + this.width]
+            
+            if (potentialTile.health) {
+                adjacentTiles.push(potentialTile)
+            }
+        }
+
+        // left adjacent
+        if (damagingTileIndex % this.width !== 0) {
+            const potentialTile = this.tiles[damagingTileIndex - 1]
+            
+            if (potentialTile.health) {
+                adjacentTiles.push(potentialTile)
+            }
+        }
+
+        return {
+            adjacent: adjacentTiles
         }
     }
 

@@ -16,7 +16,27 @@ describe('Grid', () => {
     }
 
     const mockPlayers = [mockPlayer, mockEnemy]
-    let mockWindow, mockProducerType
+    const mockProducerType = {
+        cost: 0,
+        production: 10,
+        buildTime: 5,
+        health: 100,
+    }
+    const mockDefenseType = {
+        cost: 0,
+        buildTime: 0,
+        health: 100,
+    }
+    const mockArmyType = {
+        cost: 0,
+        buildTime: 0,
+        health: 100,
+        damage: {
+            adjacent: 20
+        }
+    }
+
+    let mockWindow
 
     beforeEach(() => {
         this.gold = 0
@@ -25,12 +45,6 @@ describe('Grid', () => {
         mockWindow = {
             frameCount: 0,
             frameRate: () => 1
-        }
-        
-        mockProducerType = {
-            cost: 0,
-            production: 10,
-            buildTime: 5
         }
     })
 
@@ -139,6 +153,7 @@ describe('Grid', () => {
 
         sut.buildStructure(mockProducerType, true)
 
+        // mockWindow has frameRate of 1
         mockWindow.frameCount += mockProducerType.buildTime
 
         sut.update(mockPlayers)
@@ -146,4 +161,81 @@ describe('Grid', () => {
         expect(mockPlayers[0].getGold()).toBe(0)
         expect(mockPlayers[1].getGold()).toBe(mockProducerType.production)
     })
+
+    it('should apply army damage to near enemy tiles', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        // 0, 0
+        sut.buildStructure(mockProducerType)
+        
+        // 1, 0
+        sut.moveRight()
+        sut.buildStructure(mockProducerType)
+        
+        // 2, 0
+        sut.moveRight()
+        sut.buildStructure(mockProducerType)
+        
+        // 2, 1
+        sut.moveDown()
+        sut.buildStructure(mockProducerType)
+
+        // 2, 2
+        sut.moveDown()
+        sut.buildStructure(mockProducerType)
+
+        // 1, 2
+        sut.moveLeft()
+        sut.buildStructure(mockProducerType)
+
+        // 0, 2
+        sut.moveLeft()
+        sut.buildStructure(mockProducerType)
+
+        // 0, 1
+        sut.moveUp()
+        sut.buildStructure(mockProducerType)
+
+        // 1, 1 (middle tile, enemy tile)
+        sut.moveRight()
+        sut.buildStructure(mockArmyType, true)
+
+        sut.update(mockPlayers)
+
+        expect(sut.getTiles()[0].health).toBe(mockProducerType.health)   // top-left corner tile undamaged
+        expect(sut.getTiles()[1].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
+        expect(sut.getTiles()[2].health).toBe(mockProducerType.health)   // top-right corner tile undamaged
+        expect(sut.getTiles()[3].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
+        expect(sut.getTiles()[4].health).toBe(mockArmyType.health)  // the tile dealing damage is undamaged itself
+        expect(sut.getTiles()[5].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
+        expect(sut.getTiles()[6].health).toBe(mockProducerType.health)   // bottom-left corner tile undamaged
+        expect(sut.getTiles()[7].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
+        expect(sut.getTiles()[8].health).toBe(mockProducerType.health)   // bottom-right corner tile undamaged
+    })
+
+    it('should handle having no adjacent tiles to damage', () => {
+        const sut = new Grid(mockWindow, 1, 1)
+
+        sut.buildStructure(mockArmyType)
+        sut.update(mockPlayers)
+    })
+
+    it('should handle having only empty adjacent tiles', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        sut.moveRight()
+        sut.moveDown()
+
+        sut.buildStructure(mockArmyType)
+        sut.update(mockPlayers)
+    })
+
+    it('should handle having no tile interactions', () => {
+        const sut = new Grid(mockWindow, 1, 1)
+
+        sut.buildStructure(mockDefenseType)
+        sut.update(mockPlayers)
+    })
+
+    it('should destroy a building at 0 health')
 })

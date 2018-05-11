@@ -11,6 +11,7 @@ describe('Tile', () => {
             fill: jest.fn(),
             rect: jest.fn(),
             stroke: jest.fn(),
+            line: jest.fn(),
             strokeWeight: () => {}
         }
     })
@@ -151,5 +152,25 @@ describe('Tile', () => {
         
         sut.show()
         expect(mockWindow.text).toHaveBeenCalled()
+    })
+
+    it('should show health only after tile construction has started', () => {
+        const mockStructureType = {
+            health: 5,
+            buildTime: 1,
+            color: ''
+        }
+        const sut = new Tile(mockWindow)
+        
+        sut.show()
+        expect(mockWindow.line).not.toHaveBeenCalled()
+
+        sut.buildStructure(mockStructureType)
+        sut.show()
+        expect(mockWindow.line).toHaveBeenCalledTimes(2)
+
+        mockWindow.frameCount += 1
+        sut.show()
+        expect(mockWindow.line).toHaveBeenCalledTimes(4)
     })
 })

@@ -60,11 +60,24 @@ class Tile {
 
         this.windowObj.rect(this.x, this.y, TileSize, TileSize)
 
+        if (this.health) {
+            this.windowObj.strokeWeight(3)
+            this.windowObj.stroke('#000')
+            this.windowObj.line(this.x + 2, this.y + 2, this.x + TileSize - 2, this.y + 2)
+
+            const healthPercent = this.health / this.type.health
+            const lineLength = (TileSize - 2) * healthPercent
+
+            this.windowObj.strokeWeight(1)
+            this.windowObj.stroke('#FFF')
+            this.windowObj.line(this.x + 2, this.y + 2, this.x + lineLength, this.y + 2)
+        }
+
         if (this.isEnemy) {
             this.windowObj.fill('#FFF')
             this.windowObj.strokeWeight(2)
             this.windowObj.stroke('#000')
-            this.windowObj.text('X', this.x + (TileSize * .75) - 1, this.y + (TileSize * .75) - 1)
+            this.windowObj.text('X', this.x + (TileSize * .75) - 1, this.y + (TileSize * .75) + 1)
         }
     }
 

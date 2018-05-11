@@ -28,7 +28,6 @@ window.draw = () => {
 }
 
 window.keyPressed = () => {
-    // add shift support for player 2 so we can verify the X's appear!
     const player = !keyIsDown(SHIFT) ? players[0] : players[1]
 
     switch (window.keyCode) {

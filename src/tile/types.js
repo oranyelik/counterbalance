@@ -11,10 +11,10 @@ module.exports.Types = Object.freeze({
         color: 'rgb(255,0,0)',
         hotkey: 'A',
         cost: 80,
-        buildTime: 10,
-        health: 120,
+        buildTime: 8,
+        health: 140,
         damage: {
-            adjacent: 20
+            adjacent: 10
         }
     },
     defense: {
@@ -30,6 +30,6 @@ module.exports.Types = Object.freeze({
         cost: 110,
         buildTime: 18,
         health: 90,
-        boost: 1.1
+        boost: 1.4
     }
 })

@@ -22,6 +22,13 @@ class Tile {
         return this.type = buildingType
     }
 
+    destroyStructure() {
+        this.type = undefined
+        this.buildingCompleteFrame = undefined
+        this.isEnemy = undefined
+        this.health = undefined
+    }
+
     select() {
         this.selected = true
     }

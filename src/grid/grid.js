@@ -88,20 +88,23 @@ class Grid {
 
         for (const damagedTile of tilesToBeDamaged.adjacent) {
             damagedTile.health -= nearbyTileDamage.adjacent
-        }
 
-        // TODO: destroy structures with 0 health
+            if (damagedTile.health <= 0) {
+                damagedTile.destroyStructure()
+            }
+        }
     }
 
     // TODO: damage tiles in corners in addition to up/down/left/right
     findDamageableTiles(damagingTileIndex) {
         const adjacentTiles = []
+        const targetEnemyStatus = this.tiles[damagingTileIndex].isEnemy ? undefined : true
 
         // north adjacent
         if (damagingTileIndex - this.width >= 0) {
             const potentialTile = this.tiles[damagingTileIndex - this.width]
-            
-            if (potentialTile.health) {
+
+            if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
                 adjacentTiles.push(potentialTile)
             }
         }
@@ -109,8 +112,8 @@ class Grid {
         // right adjacent
         if ((damagingTileIndex + 1) % this.width > 0) {
             const potentialTile = this.tiles[damagingTileIndex + 1]
-            
-            if (potentialTile.health) {
+
+            if (potentialTile.health && potentialTile.isEnemy === targetEnemyStatus) {
                 adjacentTiles.push(potentialTile)
             }
         }
@@ -118,8 +121,8 @@ class Grid {
         // south adjacent
         if (damagingTileIndex + this.width < this.tiles.length) {
             const potentialTile = this.tiles[damagingTileIndex + this.width]
-            
-            if (potentialTile.health) {
+
+            if (potentialTile.health && potentialTile.isEnemy === targetEnemyStatus) {
                 adjacentTiles.push(potentialTile)
             }
         }
@@ -127,8 +130,8 @@ class Grid {
         // left adjacent
         if (damagingTileIndex % this.width !== 0) {
             const potentialTile = this.tiles[damagingTileIndex - 1]
-            
-            if (potentialTile.health) {
+
+            if (potentialTile.health && potentialTile.isEnemy === targetEnemyStatus) {
                 adjacentTiles.push(potentialTile)
             }
         }

@@ -22,11 +22,6 @@ describe('Grid', () => {
         buildTime: 5,
         health: 100,
     }
-    const mockDefenseType = {
-        cost: 0,
-        buildTime: 0,
-        health: 100,
-    }
     const mockArmyType = {
         cost: 0,
         buildTime: 0,
@@ -34,6 +29,11 @@ describe('Grid', () => {
         damage: {
             adjacent: 20
         }
+    }
+    const mockDefenseType = {
+        cost: 0,
+        buildTime: 0,
+        health: mockArmyType.damage.adjacent,   // one hit kill to simplify testing
     }
 
     let mockWindow
@@ -217,7 +217,7 @@ describe('Grid', () => {
         const sut = new Grid(mockWindow, 1, 1)
 
         sut.buildStructure(mockArmyType)
-        sut.update(mockPlayers)
+        expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
 
     it('should handle having only empty adjacent tiles', () => {
@@ -227,15 +227,40 @@ describe('Grid', () => {
         sut.moveDown()
 
         sut.buildStructure(mockArmyType)
-        sut.update(mockPlayers)
+        expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
 
     it('should handle having no tile interactions', () => {
         const sut = new Grid(mockWindow, 1, 1)
 
         sut.buildStructure(mockDefenseType)
-        sut.update(mockPlayers)
+        expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
 
-    it('should destroy a building at 0 health')
+    it('should destroy a building at 0 health', () => {
+        const sut = new Grid(mockWindow, 2, 1)
+
+        sut.buildStructure(mockArmyType)
+        sut.moveRight()
+        sut.buildStructure(mockDefenseType, true)
+
+        expect(sut.getTiles()[1].type).toBe(mockDefenseType)
+
+        sut.update(mockPlayers)
+
+        expect(sut.getTiles()[1].health).toBe(undefined)
+        expect(sut.getTiles()[1].type).toBe(undefined)
+    })
+
+    it('should not damage adjacent allied tiles', () => {
+        const sut = new Grid(mockWindow, 2, 1)
+
+        sut.buildStructure(mockDefenseType)
+        sut.moveRight()
+        sut.buildStructure(mockArmyType)
+
+        sut.update(mockPlayers)
+
+        expect(sut.getTiles()[0].type).toBe(mockDefenseType)
+    })
 })

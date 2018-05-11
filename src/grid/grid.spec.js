@@ -202,15 +202,15 @@ describe('Grid', () => {
 
         sut.update(mockPlayers)
 
-        expect(sut.getTiles()[0].health).toBe(mockProducerType.health)   // top-left corner tile undamaged
+        expect(sut.getTiles()[0].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
         expect(sut.getTiles()[1].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[2].health).toBe(mockProducerType.health)   // top-right corner tile undamaged
+        expect(sut.getTiles()[2].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
         expect(sut.getTiles()[3].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
         expect(sut.getTiles()[4].health).toBe(mockArmyType.health)  // the tile dealing damage is undamaged itself
         expect(sut.getTiles()[5].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[6].health).toBe(mockProducerType.health)   // bottom-left corner tile undamaged
+        expect(sut.getTiles()[6].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
         expect(sut.getTiles()[7].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[8].health).toBe(mockProducerType.health)   // bottom-right corner tile undamaged
+        expect(sut.getTiles()[8].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
     })
 
     it('should handle having no adjacent tiles to damage', () => {
@@ -253,7 +253,7 @@ describe('Grid', () => {
     })
 
     it('should not damage adjacent allied tiles', () => {
-        const sut = new Grid(mockWindow, 2, 1)
+        const sut = new Grid(mockWindow, 3, 3)
 
         sut.buildStructure(mockDefenseType)
         sut.moveRight()

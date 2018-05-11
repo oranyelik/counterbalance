@@ -3,7 +3,7 @@ module.exports.Types = Object.freeze({
         color: 'rgb(0,255,0)',
         hotkey: 'P',
         cost: 60,
-        buildTime: 10,
+        buildTime: 8,
         health: 100,
         production: 10
     },
@@ -28,7 +28,7 @@ module.exports.Types = Object.freeze({
         color: 'rgb(142,68,173)',
         hotkey: 'R',
         cost: 110,
-        buildTime: 18,
+        buildTime: 14,
         health: 90,
         boost: 1.4
     }

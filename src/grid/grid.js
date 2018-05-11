@@ -95,14 +95,31 @@ class Grid {
         }
     }
 
-    // TODO: damage tiles in corners in addition to up/down/left/right
     findDamageableTiles(damagingTileIndex) {
         const adjacentTiles = []
         const targetEnemyStatus = this.tiles[damagingTileIndex].isEnemy ? undefined : true
 
+        // top left corner
+        if ((damagingTileIndex - this.width - 1) % this.width === (damagingTileIndex % this.width) - 1 && damagingTileIndex - this.width - 1 >= 0) {
+            const potentialTile = this.tiles[damagingTileIndex - this.width - 1]
+
+            if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
+                adjacentTiles.push(potentialTile)
+            }
+        }
+
         // north adjacent
         if (damagingTileIndex - this.width >= 0) {
             const potentialTile = this.tiles[damagingTileIndex - this.width]
+
+            if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
+                adjacentTiles.push(potentialTile)
+            }
+        }
+
+        // top right corner
+        if ((damagingTileIndex - this.width + 1) % this.width === (damagingTileIndex % this.width) + 1 && damagingTileIndex - this.width + 1 >= 0) {
+            const potentialTile = this.tiles[damagingTileIndex - this.width + 1]
 
             if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
                 adjacentTiles.push(potentialTile)
@@ -118,11 +135,29 @@ class Grid {
             }
         }
 
+        // bottom left corner
+        if ((damagingTileIndex + this.width - 1) % this.width === (damagingTileIndex % this.width) - 1 && damagingTileIndex + this.width - 1 <= this.tiles.length) {
+            const potentialTile = this.tiles[damagingTileIndex + this.width - 1]
+
+            if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
+                adjacentTiles.push(potentialTile)
+            }
+        }
+
         // south adjacent
         if (damagingTileIndex + this.width < this.tiles.length) {
             const potentialTile = this.tiles[damagingTileIndex + this.width]
 
             if (potentialTile.health && potentialTile.isEnemy === targetEnemyStatus) {
+                adjacentTiles.push(potentialTile)
+            }
+        }
+
+        // bottom right corner
+        if ((damagingTileIndex + this.width + 1) % this.width === (damagingTileIndex % this.width) + 1 && damagingTileIndex + this.width + 1 <= this.tiles.length) {
+            const potentialTile = this.tiles[damagingTileIndex + this.width + 1]
+
+            if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
                 adjacentTiles.push(potentialTile)
             }
         }

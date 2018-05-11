@@ -74,19 +74,19 @@ class Tile {
         const progressPercent = 100 - (buildFramesRemaining / totalFramesToBuild) * 100
 
         if (progressPercent < 20) {
-            return 0.15
+            return 0
         }
         else if (progressPercent < 40) {
-            return 0.35
+            return 0.20
         }
         else if (progressPercent < 60) {
-            return 0.55
+            return 0.40
         }
         else if (progressPercent < 80) {
-            return 0.75
+            return 0.60
         }
         else {
-            return 0.95
+            return 0.80
         }
     }
 }

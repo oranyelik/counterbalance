@@ -1,5 +1,5 @@
 const Player = require('./player').Player
-const PlayerTypes = require('./player').PlayerTypes
+const TileTypes = require('../tile/types').Types
 
 describe('Player', () => {
     it('should exist', () => {
@@ -51,5 +51,51 @@ describe('Player', () => {
         sut.build(mockStructure, mockGrid)
 
         expect(mockGrid.buildStructure).toHaveBeenCalledWith(mockStructure, true)
+    })
+
+    it('should have regular gold production with no researchers', () => {
+        const sut = new Player()
+        const mockGrid = {
+            buildStructure: jest.fn((() => true))
+        }
+
+        sut.build({}, mockGrid)
+
+        expect(sut.getGoldProduction()).toBe(TileTypes.producer.production)
+    })
+
+    it('should have boosted gold production with 1 researcher', () => {
+        const sut = new Player()
+        const mockGrid = {
+            buildStructure: jest.fn((() => true))
+        }
+
+        sut.build({}, mockGrid)
+        sut.researcherTileIndicies.push({})
+
+        expect(sut.getGoldProduction()).toBe(TileTypes.producer.production * TileTypes.research.boost)
+    })
+
+    it('should have regular army damage with no researchers', () => {
+        const sut = new Player()
+        const mockGrid = {
+            buildStructure: jest.fn((() => true))
+        }
+
+        sut.build({}, mockGrid)
+
+        expect(sut.getArmyDamage()).toBe(TileTypes.army.damage)
+    })
+
+    it('should have boosted army damage with 1 researcher', () => {
+        const sut = new Player()
+        const mockGrid = {
+            buildStructure: jest.fn((() => true))
+        }
+
+        sut.build({}, mockGrid)
+        sut.researcherTileIndicies.push({})
+
+        expect(sut.getArmyDamage()).toBe(TileTypes.army.damage * TileTypes.research.boost)
     })
 })

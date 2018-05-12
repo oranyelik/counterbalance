@@ -1,6 +1,9 @@
+const TileTypes = require('../tile/types').Types
+
 class Player {
     constructor(isEnemy) {
         this.gold = 0
+        this.researcherTileIndicies = []
 
         if (isEnemy) {
             this.isEnemy = isEnemy
@@ -23,6 +26,28 @@ class Player {
         }
         else {
             return false
+        }
+    }
+
+    getGoldProduction() {
+        const boost = TileTypes.research.boost * this.researcherTileIndicies.length
+
+        if (boost) {
+            return TileTypes.producer.production * boost
+        }
+        else {
+            return TileTypes.producer.production
+        }
+    }
+
+    getArmyDamage() {
+        const boost = TileTypes.research.boost * this.researcherTileIndicies.length
+
+        if (boost) {
+            return TileTypes.army.damage * boost
+        }
+        else {
+            return TileTypes.army.damage
         }
     }
 }

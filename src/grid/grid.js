@@ -61,36 +61,42 @@ class Grid {
     update(players) {
         for (let i = 0; i < this.tiles.length; i++) {
             const tile = this.tiles[i]
+            const player = tile.isEnemy ? players[1] : players[0]
+            const opponent = tile.isEnemy ? players[0] : players[1]
 
             if (!tile.type)
                 continue
 
-            if (this.windowObj.frameCount >= tile.buildingCompleteFrame) {
-                if (tile.type.production) {
-                    if (tile.isEnemy) {
-                        players[1].addGold(tile.type.production)
-                    }
-                    else {
-                        players[0].addGold(tile.type.production)
-                    }
-                }
-                else if (tile.type.damage) {
-                    this.applyDamage(i, tile.type.damage)
+            if (this.windowObj.frameCount < tile.buildingCompleteFrame)
+                continue;
+
+            if (tile.type.production) {
+                const goldToBeAdded = player.getGoldProduction()
+                player.addGold(goldToBeAdded)
+            }
+            else if (tile.type.damage) {
+                const damageToBeApplied = player.getArmyDamage()
+                this.applyDamage(i, damageToBeApplied, opponent)
+            }
+            else if (tile.type.boost) {
+                if (player.researcherTileIndicies.indexOf(i) === -1) {
+                    player.researcherTileIndicies.push(i);
                 }
             }
-
-            // TODO: apply boost mechanics from research
         }
     }
 
-    applyDamage(damagingTileIndex, nearbyTileDamage) {
+    applyDamage(damagingTileIndex, nearbyTileDamage, playerTakingDamage) {
         const tilesToBeDamaged = this.findDamageableTiles(damagingTileIndex)
 
-        for (const damagedTile of tilesToBeDamaged.adjacent) {
-            damagedTile.health -= nearbyTileDamage.adjacent
+        for (const damagedTile of tilesToBeDamaged) {
+            damagedTile.tile.health -= nearbyTileDamage
 
-            if (damagedTile.health <= 0) {
-                damagedTile.destroyStructure()
+            if (damagedTile.tile.health <= 0) {
+                damagedTile.tile.destroyStructure()
+
+                playerTakingDamage.researcherTileIndicies
+                    = playerTakingDamage.researcherTileIndicies.filter(e => e !== damagedTile.index)
             }
         }
     }
@@ -100,80 +106,110 @@ class Grid {
         const targetEnemyStatus = this.tiles[damagingTileIndex].isEnemy ? undefined : true
 
         // top left corner
-        if ((damagingTileIndex - this.width - 1) % this.width === (damagingTileIndex % this.width) - 1 && damagingTileIndex - this.width - 1 >= 0) {
-            const potentialTile = this.tiles[damagingTileIndex - this.width - 1]
+        let potentialTileIndex = damagingTileIndex - this.width - 1
+        if (potentialTileIndex % this.width === (damagingTileIndex % this.width) - 1 && potentialTileIndex >= 0) {
+            const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
-                adjacentTiles.push(potentialTile)
+                adjacentTiles.push({
+                    tile: potentialTile,
+                    index: potentialTileIndex
+                })
             }
         }
 
         // north adjacent
-        if (damagingTileIndex - this.width >= 0) {
+        potentialTileIndex = damagingTileIndex - this.width
+        if (potentialTileIndex >= 0) {
             const potentialTile = this.tiles[damagingTileIndex - this.width]
 
             if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
-                adjacentTiles.push(potentialTile)
+                adjacentTiles.push({
+                    tile: potentialTile,
+                    index: potentialTileIndex
+                })
             }
         }
 
         // top right corner
-        if ((damagingTileIndex - this.width + 1) % this.width === (damagingTileIndex % this.width) + 1 && damagingTileIndex - this.width + 1 >= 0) {
-            const potentialTile = this.tiles[damagingTileIndex - this.width + 1]
+        potentialTileIndex = damagingTileIndex - this.width + 1
+        if (potentialTileIndex % this.width === (damagingTileIndex % this.width) + 1 && potentialTileIndex >= 0) {
+            const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
-                adjacentTiles.push(potentialTile)
+                adjacentTiles.push({
+                    tile: potentialTile,
+                    index: potentialTileIndex
+                })
             }
         }
 
         // right adjacent
-        if ((damagingTileIndex + 1) % this.width > 0) {
-            const potentialTile = this.tiles[damagingTileIndex + 1]
+        potentialTileIndex = damagingTileIndex + 1
+        if (potentialTileIndex % this.width > 0) {
+            const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy === targetEnemyStatus) {
-                adjacentTiles.push(potentialTile)
+                adjacentTiles.push({
+                    tile: potentialTile,
+                    index: potentialTileIndex
+                })
             }
         }
 
         // bottom left corner
-        if ((damagingTileIndex + this.width - 1) % this.width === (damagingTileIndex % this.width) - 1 && damagingTileIndex + this.width - 1 <= this.tiles.length) {
-            const potentialTile = this.tiles[damagingTileIndex + this.width - 1]
+        potentialTileIndex = damagingTileIndex + this.width - 1
+        if (potentialTileIndex % this.width === (damagingTileIndex % this.width) - 1 && potentialTileIndex <= this.tiles.length) {
+            const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
-                adjacentTiles.push(potentialTile)
+                adjacentTiles.push({
+                    tile: potentialTile,
+                    index: potentialTileIndex
+                })
             }
         }
 
         // south adjacent
-        if (damagingTileIndex + this.width < this.tiles.length) {
-            const potentialTile = this.tiles[damagingTileIndex + this.width]
+        potentialTileIndex = damagingTileIndex + this.width
+        if (potentialTileIndex < this.tiles.length) {
+            const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy === targetEnemyStatus) {
-                adjacentTiles.push(potentialTile)
+                adjacentTiles.push({
+                    tile: potentialTile,
+                    index: potentialTileIndex
+                })
             }
         }
 
         // bottom right corner
-        if ((damagingTileIndex + this.width + 1) % this.width === (damagingTileIndex % this.width) + 1 && damagingTileIndex + this.width + 1 <= this.tiles.length) {
-            const potentialTile = this.tiles[damagingTileIndex + this.width + 1]
+        potentialTileIndex = damagingTileIndex + this.width + 1
+        if (potentialTileIndex % this.width === (damagingTileIndex % this.width) + 1 && potentialTileIndex <= this.tiles.length) {
+            const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
-                adjacentTiles.push(potentialTile)
+                adjacentTiles.push({
+                    tile: potentialTile,
+                    index: potentialTileIndex
+                })
             }
         }
 
         // left adjacent
+        potentialTileIndex = damagingTileIndex - 1
         if (damagingTileIndex % this.width !== 0) {
-            const potentialTile = this.tiles[damagingTileIndex - 1]
+            const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy === targetEnemyStatus) {
-                adjacentTiles.push(potentialTile)
+                adjacentTiles.push({
+                    tile: potentialTile,
+                    index: potentialTileIndex
+                })
             }
         }
 
-        return {
-            adjacent: adjacentTiles
-        }
+        return adjacentTiles
     }
 
     /* istanbul ignore next */

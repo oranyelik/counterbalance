@@ -1,21 +1,6 @@
 const Grid = require('./grid').Grid
 
 describe('Grid', () => {
-    const mockPlayer = {
-        addGold: amount => {
-            this.gold += amount
-        },
-        getGold: () => this.gold
-    }
-    const mockEnemy = {
-        isEnemy: true,
-        addGold: amount => {
-            this.enemyGold += amount
-        },
-        getGold: () => this.enemyGold
-    }
-
-    const mockPlayers = [mockPlayer, mockEnemy]
     const mockProducerType = {
         cost: 0,
         production: 10,
@@ -26,21 +11,51 @@ describe('Grid', () => {
         cost: 0,
         buildTime: 0,
         health: 100,
-        damage: {
-            adjacent: 20
-        }
+        damage: 20
     }
     const mockDefenseType = {
         cost: 0,
         buildTime: 0,
-        health: mockArmyType.damage.adjacent,   // one hit kill to simplify testing
+        health: mockArmyType.damage,   // one hit kill to simplify testing
     }
+    const mockResearcherType = {
+        health: mockArmyType.damage,   // one hit kill to simplify testing
+        cost: 0,
+        buildTime: 0,
+        boost: 1.5
+    }
+
+    const mockPlayer = {
+        addGold: amount => {
+            this.gold += amount
+        },
+        getGold: () => this.gold,
+        getArmyDamage: () => mockArmyType.damage,
+        getGoldProduction: () => mockProducerType.production * ((mockResearcherType.boost * mockPlayer.mockResearchTileLength) || 1)
+    }
+    const mockEnemy = {
+        isEnemy: true,
+        addGold: amount => {
+            this.enemyGold += amount
+        },
+        getGold: () => this.enemyGold,
+        getArmyDamage: () => mockArmyType.damage,
+        getGoldProduction: () => mockProducerType.production
+    }
+
+    const mockPlayers = [mockPlayer, mockEnemy]
 
     let mockWindow
 
     beforeEach(() => {
         this.gold = 0
         this.enemyGold = 0
+
+        mockPlayer.mockResearchTileLength = 0
+        mockPlayer.researcherTileIndicies = []
+
+        mockEnemy.mockResearchTileLength = 0
+        mockEnemy.researcherTileIndicies = []
 
         mockWindow = {
             frameCount: 0,
@@ -167,15 +182,15 @@ describe('Grid', () => {
 
         // 0, 0
         sut.buildStructure(mockProducerType)
-        
+
         // 1, 0
         sut.moveRight()
         sut.buildStructure(mockProducerType)
-        
+
         // 2, 0
         sut.moveRight()
         sut.buildStructure(mockProducerType)
-        
+
         // 2, 1
         sut.moveDown()
         sut.buildStructure(mockProducerType)
@@ -202,15 +217,15 @@ describe('Grid', () => {
 
         sut.update(mockPlayers)
 
-        expect(sut.getTiles()[0].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[1].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[2].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[3].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
+        expect(sut.getTiles()[0].health).toBe(mockProducerType.health - mockArmyType.damage)
+        expect(sut.getTiles()[1].health).toBe(mockProducerType.health - mockArmyType.damage)
+        expect(sut.getTiles()[2].health).toBe(mockProducerType.health - mockArmyType.damage)
+        expect(sut.getTiles()[3].health).toBe(mockProducerType.health - mockArmyType.damage)
         expect(sut.getTiles()[4].health).toBe(mockArmyType.health)  // the tile dealing damage is undamaged itself
-        expect(sut.getTiles()[5].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[6].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[7].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
-        expect(sut.getTiles()[8].health).toBe(mockProducerType.health - mockArmyType.damage.adjacent)
+        expect(sut.getTiles()[5].health).toBe(mockProducerType.health - mockArmyType.damage)
+        expect(sut.getTiles()[6].health).toBe(mockProducerType.health - mockArmyType.damage)
+        expect(sut.getTiles()[7].health).toBe(mockProducerType.health - mockArmyType.damage)
+        expect(sut.getTiles()[8].health).toBe(mockProducerType.health - mockArmyType.damage)
     })
 
     it('should handle having no adjacent tiles to damage', () => {
@@ -262,5 +277,48 @@ describe('Grid', () => {
         sut.update(mockPlayers)
 
         expect(sut.getTiles()[0].type).toBe(mockDefenseType)
+    })
+
+    it('should use research structures to boost production', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        sut.buildStructure(mockProducerType)
+        sut.moveRight()
+        sut.buildStructure(mockResearcherType)
+        mockPlayer.mockResearchTileLength++
+
+        mockWindow.frameCount += mockProducerType.buildTime
+
+        sut.update(mockPlayers)
+
+        expect(mockPlayers[0].getGold()).toBe(mockProducerType.production * mockResearcherType.boost)
+    })
+
+    it('should not add researcher to boost if already there', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        sut.buildStructure(mockResearcherType)
+        sut.update(mockPlayers)
+        sut.update(mockPlayers)
+
+        expect(mockPlayer.researcherTileIndicies.length).toBe(1)
+    })
+
+    it('should not add boost for destroyed research structure', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        sut.buildStructure(mockResearcherType)
+
+        sut.update(mockPlayers)
+        expect(mockPlayer.researcherTileIndicies.length).toBe(1)
+
+        sut.moveRight()
+        sut.buildStructure(mockArmyType, true)
+
+        sut.update(mockPlayers)
+
+        expect(sut.getTiles()[0].health).toBe(undefined)
+        expect(sut.getTiles()[0].type).toBe(undefined)
+        expect(mockPlayer.researcherTileIndicies.length).toBe(0)
     })
 })

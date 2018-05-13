@@ -33,6 +33,12 @@ window.draw = () => {
     if (frameCount % framesPerSecond === 0) {
         playableGrid.update(players)
     }
+
+    if (players[0].numStructures === 0) {
+        text('Player 2 WINS!', 500, 80, 100, 100)
+    } else if (players[1].numStructures === 0) {
+        text('Player 1 WINS!', 500, 80, 100, 100)
+    }
 }
 
 window.keyPressed = () => {

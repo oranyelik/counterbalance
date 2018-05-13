@@ -4,6 +4,7 @@ class Player {
     constructor(isEnemy) {
         this.gold = 0
         this.researcherTileIndicies = []
+        this.numStructures = 1
 
         if (isEnemy) {
             this.isEnemy = isEnemy
@@ -21,6 +22,7 @@ class Player {
     build(structure, buildableGrid) {
         if (this.gold >= structure.cost && buildableGrid.buildStructure(structure, this.isEnemy)) {
             this.gold -= structure.cost
+            this.numStructures++
             
             return true
         }

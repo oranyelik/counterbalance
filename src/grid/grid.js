@@ -95,6 +95,7 @@ class Grid {
             if (damagedTile.tile.health <= 0) {
                 damagedTile.tile.destroyStructure()
 
+                playerTakingDamage.numStructures--
                 playerTakingDamage.researcherTileIndicies
                     = playerTakingDamage.researcherTileIndicies.filter(e => e !== damagedTile.index)
             }

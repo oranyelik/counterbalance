@@ -10,10 +10,19 @@ const players = []
 
 window.setup = () => {
     createCanvas(600, 450)
+    frameRate(framesPerSecond)
+
     playableGrid = new Grid(window, 20, 20)
     players[0] = new Player()
     players[1] = new Player(true)
-    frameRate(framesPerSecond)
+
+    const tiles = playableGrid.getTiles()
+
+    tiles[0].buildStructure(Types.producer)
+    tiles[tiles.length - 1].buildStructure(Types.producer, true)
+
+    players[0].addGold(250)
+    players[1].addGold(250)
 }
 
 window.draw = () => {
@@ -30,9 +39,6 @@ window.keyPressed = () => {
     const player = !keyIsDown(SHIFT) ? players[0] : players[1]
 
     switch (window.keyCode) {
-        case ' '.charCodeAt():
-            player.addGold(250)
-            break
         case Types.producer.hotkey.charCodeAt():
             player.build(Types.producer, playableGrid)
             break

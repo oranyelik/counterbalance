@@ -68,7 +68,7 @@ class Grid {
                 continue
 
             if (this.windowObj.frameCount < tile.buildingCompleteFrame)
-                continue;
+                continue
 
             if (tile.type.production) {
                 const goldToBeAdded = player.getGoldProduction()
@@ -80,7 +80,7 @@ class Grid {
             }
             else if (tile.type.boost) {
                 if (player.researcherTileIndicies.indexOf(i) === -1) {
-                    player.researcherTileIndicies.push(i);
+                    player.researcherTileIndicies.push(i)
                 }
             }
         }

@@ -23,7 +23,7 @@ class Player {
         if (this.gold >= structure.cost && buildableGrid.buildStructure(structure, this.isEnemy)) {
             this.gold -= structure.cost
             this.numStructures++
-            
+
             return true
         }
         else {

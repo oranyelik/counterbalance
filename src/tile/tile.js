@@ -77,6 +77,7 @@ class Tile {
             this.windowObj.fill('#FFF')
             this.windowObj.strokeWeight(2)
             this.windowObj.stroke('#000')
+            this.windowObj.textSize(12)
             this.windowObj.text('X', this.x + (TileSize * .75) - 1, this.y + (TileSize * .75) + 1)
         }
     }

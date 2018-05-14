@@ -12,6 +12,7 @@ describe('Tile', () => {
             rect: jest.fn(),
             stroke: jest.fn(),
             line: jest.fn(),
+            textSize: () => {},
             strokeWeight: () => {}
         }
     })
@@ -96,15 +97,15 @@ describe('Tile', () => {
             color: 'rgb(255,255,255)'
         }
         const sut = new Tile(mockWindow)
-        
+
         sut.buildStructure(mockStructureType)
-        
+
         sut.show()
         mockWindow.frameCount += 1
         sut.show()
 
         expect(mockWindow.fill.mock.calls[1]).not.toEqual(mockWindow.fill.mock.calls[0])
-        
+
         mockWindow.frameCount += 1
         sut.show()
         expect(mockWindow.fill.mock.calls[2]).not.toEqual(mockWindow.fill.mock.calls[1])
@@ -133,9 +134,9 @@ describe('Tile', () => {
             color: 'rgb(255,255,255)'
         }
         const sut = new Tile(mockWindow)
-        
+
         sut.buildStructure(mockStructureType)
-        
+
         sut.show()
         expect(mockWindow.text).not.toHaveBeenCalled()
     })
@@ -147,9 +148,9 @@ describe('Tile', () => {
             color: 'rgb(255,255,255)'
         }
         const sut = new Tile(mockWindow)
-        
+
         sut.buildStructure(mockStructureType, true)
-        
+
         sut.show()
         expect(mockWindow.text).toHaveBeenCalled()
     })
@@ -161,7 +162,7 @@ describe('Tile', () => {
             color: ''
         }
         const sut = new Tile(mockWindow)
-        
+
         sut.show()
         expect(mockWindow.line).not.toHaveBeenCalled()
 

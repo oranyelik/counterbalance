@@ -1,4 +1,5 @@
 import 'p5'
+import { TileSize } from './tile/tile'
 import { Grid } from './grid/grid'
 import { Types } from './tile/types'
 import { Player } from './player/player'
@@ -29,15 +30,18 @@ window.draw = () => {
     background(0)   // see: https://github.com/processing/p5.js/issues/2814
     playableGrid.show()
     showPlayerGold()
+    showControlsLegend()
 
     if (frameCount % framesPerSecond === 0) {
         playableGrid.update(players)
     }
 
     if (players[0].numStructures === 0) {
-        text('Player 2 WINS!', 500, 80, 100, 100)
+        text('Player 2 WINS!', 500, 80, 80, 80)
+        window.noLoop()
     } else if (players[1].numStructures === 0) {
-        text('Player 1 WINS!', 500, 80, 100, 100)
+        text('Player 1 WINS!', 500, 80, 80, 80)
+        window.noLoop()
     }
 }
 
@@ -72,17 +76,58 @@ window.keyPressed = () => {
     }
 }
 
+function showControlsLegend() {
+    textSize(8)
+
+    strokeWeight(1)
+    stroke('#FFF')
+    fill(Types.producer.color)
+    rect(470, 200, TileSize, TileSize)
+
+    noStroke()
+    fill('#FFF')
+    text('PRODUCTION (P)', 570, 212)
+
+    strokeWeight(1)
+    stroke('#FFF')
+    fill(Types.army.color)
+    rect(470, 230, TileSize, TileSize)
+
+    noStroke()
+    fill('#FFF')
+    text('ARMY (A)', 570, 244)
+
+    strokeWeight(1)
+    stroke('#FFF')
+    fill(Types.defense.color)
+    rect(470, 260, TileSize, TileSize)
+
+    noStroke()
+    fill('#FFF')
+    text('DEFENSE (D)', 570, 276)
+
+    strokeWeight(1)
+    stroke('#FFF')
+    fill(Types.research.color)
+    rect(470, 290, TileSize, TileSize)
+
+    noStroke()
+    fill('#FFF')
+    text('RESEARCH (R)', 570, 305)
+}
+
 function showPlayerGold() {
+    textSize(12)
     fill('#FFF')
     noStroke()
-    
-    textAlign(LEFT)
-    text('Player 1 Gold:', 500, 10, 80, 80)
-    textAlign(RIGHT)
-    text(players[0].getGold(), 500, 20, 80, 80)
 
     textAlign(LEFT)
-    text('Player 2 Gold:', 500, 40, 80, 80)
+    text('Player 1 Gold', 500, 10, 80, 80)
     textAlign(RIGHT)
-    text(players[1].getGold(), 500, 50, 80, 80)
+    text(players[0].getGold(), 495, 20, 80, 80)
+
+    textAlign(LEFT)
+    text('Player 2 Gold', 500, 40, 80, 80)
+    textAlign(RIGHT)
+    text(players[1].getGold(), 495, 50, 80, 80)
 }

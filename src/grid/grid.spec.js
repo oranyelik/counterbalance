@@ -90,36 +90,42 @@ describe('Grid', () => {
     })
 
     it('should move selection only within grid boundaries for multiple tiles', () => {
-        const sut = new Grid({}, 2, 2)
+        const sut = new Grid(mockWindow, 2, 2)
 
         const tiles = sut.getTiles()
 
+        sut.buildStructure(mockDefenseType)
         sut.moveUp()
         expect(tiles[0].selected).toBe(true)
 
         sut.moveRight()
+        sut.buildStructure(mockDefenseType)
         sut.moveRight()
         expect(tiles[1].selected).toBe(true)
 
         sut.moveDown()
+        sut.buildStructure(mockDefenseType)
         sut.moveDown()
         expect(tiles[3].selected).toBe(true)
 
         sut.moveLeft()
+        sut.buildStructure(mockDefenseType)
         sut.moveLeft()
         expect(tiles[2].selected).toBe(true)
     })
 
     it('should move proper selection', () => {
-        const sut = new Grid({}, 2, 2)
+        const sut = new Grid(mockWindow, 2, 2)
 
         const tiles = sut.getTiles()
+        sut.buildStructure(mockDefenseType)
         expect(tiles[0].selected).toBe(true)
 
         sut.moveRight()
         expect(tiles[0].selected).toBe(false)
         expect(tiles[1].selected).toBe(true)
 
+        sut.buildStructure(mockDefenseType)
         sut.moveDown()
         expect(tiles[1].selected).toBe(false)
         expect(tiles[3].selected).toBe(true)
@@ -321,4 +327,26 @@ describe('Grid', () => {
         expect(sut.getTiles()[0].type).toBe(undefined)
         expect(mockPlayer.researcherTileIndicies.length).toBe(0)
     })
+
+    it('should only let you select spaces adjacent to spaces with your structures', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        sut.buildStructure(mockProducerType)
+        sut.moveRight()
+        sut.moveRight()
+
+        expect(sut.selectedTileIndex).toBe(1)
+    })
+
+    it('should let you select tiles with structures you own', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        sut.buildStructure(mockProducerType)
+        sut.moveRight()
+        sut.moveLeft()
+
+        expect(sut.selectedTileIndex).toBe(0)
+    })
+
+    it('should jump across tiles with no structures if needed')
 })

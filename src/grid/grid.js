@@ -19,6 +19,9 @@ class Grid {
     }
 
     buildStructure(type, isEnemy) {
+        if (!this.isSelectedTileAdjacentToPlayerTile(isEnemy))
+            return false
+
         return this.tiles[this.selectedTileIndex].buildStructure(type, isEnemy)
     }
 
@@ -29,80 +32,66 @@ class Grid {
     moveUp() {
         const desiredIndex = this.selectedTileIndex - this.width
         if (desiredIndex >= 0) {
-            if (this.isAdjacentToExistingTile(desiredIndex)) {
-                this.tiles[this.selectedTileIndex].unselect()
-                this.tiles[desiredIndex].select()
-                this.selectedTileIndex -= this.width
-            }
+            this.tiles[this.selectedTileIndex].unselect()
+            this.tiles[desiredIndex].select()
+            this.selectedTileIndex -= this.width
         }
     }
 
     moveRight() {
         const desiredIndex = this.selectedTileIndex + 1
         if (desiredIndex % this.width > 0) {
-            if (this.isAdjacentToExistingTile(desiredIndex)) {
-                this.tiles[this.selectedTileIndex].unselect()
-                this.tiles[desiredIndex].select()
-                this.selectedTileIndex++
-            }
+            this.tiles[this.selectedTileIndex].unselect()
+            this.tiles[desiredIndex].select()
+            this.selectedTileIndex++
         }
     }
 
     moveDown() {
         const desiredIndex = this.selectedTileIndex + this.width
         if (desiredIndex < this.tiles.length) {
-            if (this.isAdjacentToExistingTile(desiredIndex)) {
-                this.tiles[this.selectedTileIndex].unselect()
-                this.tiles[desiredIndex].select()
-                this.selectedTileIndex += this.width
-            }
+            this.tiles[this.selectedTileIndex].unselect()
+            this.tiles[desiredIndex].select()
+            this.selectedTileIndex += this.width
         }
     }
 
     moveLeft() {
         if (this.selectedTileIndex % this.width !== 0) {
-            const desiredIndex = this.selectedTileIndex - 1
-            
-            if (this.isAdjacentToExistingTile(desiredIndex)) {
-                this.tiles[this.selectedTileIndex].unselect()
-                this.tiles[desiredIndex].select()
-                this.selectedTileIndex--
-            }
+            this.tiles[this.selectedTileIndex].unselect()
+            this.tiles[this.selectedTileIndex - 1].select()
+            this.selectedTileIndex--
         }
     }
 
-    isAdjacentToExistingTile(desiredIndex) {
-        const above = desiredIndex - this.width
-        const right = desiredIndex + 1
-        const below = desiredIndex + this.width
-        const left = desiredIndex - 1
+    isSelectedTileAdjacentToPlayerTile(isEnemy) {
+        const above = this.selectedTileIndex - this.width
+        const right = this.selectedTileIndex + 1
+        const below = this.selectedTileIndex + this.width
+        const left = this.selectedTileIndex - 1
 
         if (above >= 0) {
-            if (this.tiles[above].type !== undefined && this.tiles[above].isEnemy === undefined) {
+            if (this.tiles[above].type !== undefined && this.tiles[above].isEnemy === isEnemy) {
                 return true
             }
         }
 
         if (right < this.tiles.length) {
-            if (this.tiles[right].type !== undefined && this.tiles[right].isEnemy === undefined) {
+            if (this.tiles[right].type !== undefined && this.tiles[right].isEnemy === isEnemy) {
                 return true
             }
         }
 
         if (below < this.tiles.length) {
-            if (this.tiles[below].type !== undefined && this.tiles[below].isEnemy === undefined) {
+            if (this.tiles[below].type !== undefined && this.tiles[below].isEnemy === isEnemy) {
                 return true
             }
         }
 
         if (left >= 0) {
-            if (this.tiles[left].type !== undefined && this.tiles[left].isEnemy === undefined) {
+            if (this.tiles[left].type !== undefined && this.tiles[left].isEnemy === isEnemy) {
                 return true
             }
-        }
-
-        if (this.tiles[desiredIndex].type != undefined && this.tiles[desiredIndex].isEnemy === undefined) {
-            return true
         }
 
         return false

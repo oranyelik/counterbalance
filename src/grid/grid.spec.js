@@ -140,7 +140,10 @@ describe('Grid', () => {
     })
 
     it('should build producer on selected tile', () => {
-        const sut = new Grid(mockWindow, 1, 1)
+        const sut = new Grid(mockWindow, 2, 1)
+
+        sut.getTiles()[0].buildStructure({})
+        sut.moveRight()
 
         const firstAttemptResult = sut.buildStructure({})
         expect(firstAttemptResult).toBeTruthy()
@@ -155,7 +158,7 @@ describe('Grid', () => {
         sut.update(mockPlayers)
         expect(mockPlayers[0].getGold()).toBe(0)
 
-        sut.buildStructure(mockProducerType)
+        sut.getTiles()[0].buildStructure(mockProducerType)
 
         sut.update(mockPlayers)
         expect(mockPlayers[0].getGold()).toBe(0)
@@ -172,7 +175,7 @@ describe('Grid', () => {
         expect(mockPlayers[0].getGold()).toBe(0)
         expect(mockPlayers[1].getGold()).toBe(0)
 
-        sut.buildStructure(mockProducerType, true)
+        sut.getTiles()[0].buildStructure(mockProducerType, true)
 
         // mockWindow has frameRate of 1
         mockWindow.frameCount += mockProducerType.buildTime
@@ -187,7 +190,7 @@ describe('Grid', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
         // 0, 0
-        sut.buildStructure(mockProducerType)
+        sut.getTiles()[0].buildStructure(mockProducerType)
 
         // 1, 0
         sut.moveRight()
@@ -219,7 +222,7 @@ describe('Grid', () => {
 
         // 1, 1 (middle tile, enemy tile)
         sut.moveRight()
-        sut.buildStructure(mockArmyType, true)
+        sut.getTiles()[4].buildStructure(mockArmyType, true)
 
         sut.update(mockPlayers)
 
@@ -261,9 +264,9 @@ describe('Grid', () => {
     it('should destroy a building at 0 health', () => {
         const sut = new Grid(mockWindow, 2, 1)
 
-        sut.buildStructure(mockArmyType)
+        sut.getTiles()[0].buildStructure(mockArmyType)
         sut.moveRight()
-        sut.buildStructure(mockDefenseType, true)
+        sut.getTiles()[1].buildStructure(mockDefenseType, true)
 
         expect(sut.getTiles()[1].type).toBe(mockDefenseType)
 
@@ -276,7 +279,7 @@ describe('Grid', () => {
     it('should not damage adjacent allied tiles', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.buildStructure(mockDefenseType)
+        sut.getTiles()[0].buildStructure(mockDefenseType)
         sut.moveRight()
         sut.buildStructure(mockArmyType)
 
@@ -288,7 +291,8 @@ describe('Grid', () => {
     it('should use research structures to boost production', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.buildStructure(mockProducerType)
+        sut.getTiles()[0].buildStructure(mockProducerType)
+
         sut.moveRight()
         sut.buildStructure(mockResearcherType)
         mockPlayer.mockResearchTileLength++
@@ -303,7 +307,8 @@ describe('Grid', () => {
     it('should not add researcher to boost if already there', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.buildStructure(mockResearcherType)
+        sut.getTiles()[0].buildStructure(mockResearcherType)
+
         sut.update(mockPlayers)
         sut.update(mockPlayers)
 
@@ -313,13 +318,13 @@ describe('Grid', () => {
     it('should not add boost for destroyed research structure', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.buildStructure(mockResearcherType)
+        sut.getTiles()[0].buildStructure(mockResearcherType)
 
         sut.update(mockPlayers)
         expect(mockPlayer.researcherTileIndicies.length).toBe(1)
 
         sut.moveRight()
-        sut.buildStructure(mockArmyType, true)
+        sut.getTiles()[1].buildStructure(mockArmyType, true)
 
         sut.update(mockPlayers)
 
@@ -328,25 +333,38 @@ describe('Grid', () => {
         expect(mockPlayer.researcherTileIndicies.length).toBe(0)
     })
 
-    it('should only let you select spaces adjacent to spaces with your structures', () => {
+    it('should only allow you to build on spaces above/below/left/right of spaces with your structures', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.buildStructure(mockProducerType)
-        sut.moveRight()
-        sut.moveRight()
+        // start with structure in the middle
+        sut.getTiles()[4].buildStructure(mockProducerType)
 
-        expect(sut.selectedTileIndex).toBe(1)
-    })
+        // can't build on top-left corner
+        expect(sut.buildStructure(mockProducerType)).toBeFalsy()
 
-    it('should let you select tiles with structures you own', () => {
-        const sut = new Grid(mockWindow, 3, 3)
-
-        sut.buildStructure(mockProducerType)
         sut.moveRight()
+        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        sut.getTiles()[1].destroyStructure()
+
+        sut.moveRight()
+        expect(sut.buildStructure(mockProducerType)).toBeFalsy()
+
+        sut.moveDown()
+        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        sut.getTiles()[5].destroyStructure()
+
+        sut.moveDown()
+        expect(sut.buildStructure(mockProducerType)).toBeFalsy()
+
         sut.moveLeft()
+        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        sut.getTiles()[7].destroyStructure()
 
-        expect(sut.selectedTileIndex).toBe(0)
+        sut.moveLeft()
+        expect(sut.buildStructure(mockProducerType)).toBeFalsy()
+
+        sut.moveUp()
+        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        sut.getTiles()[3].destroyStructure()
     })
-
-    it('should jump across tiles with no structures if needed')
 })

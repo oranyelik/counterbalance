@@ -238,19 +238,40 @@ describe('Grid', () => {
     })
 
     it('should handle having no adjacent tiles to damage', () => {
-        const sut = new Grid(mockWindow, 1, 1)
+        const sut = new Grid(mockWindow, 3, 3)
 
-        sut.buildStructure(mockArmyType)
+        sut.getTiles()[4].buildStructure(mockArmyType)
+
         expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
 
-    it('should handle having only empty adjacent tiles', () => {
+    it('should handle army tiles around edges', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
+        sut.getTiles()[0].buildStructure(mockArmyType)
         sut.moveRight()
-        sut.moveDown()
 
         sut.buildStructure(mockArmyType)
+        sut.moveRight()
+
+        sut.buildStructure(mockArmyType)
+        sut.moveRight()
+
+        sut.moveDown()
+        sut.buildStructure(mockArmyType)
+
+        sut.moveDown()
+        sut.buildStructure(mockArmyType)
+
+        sut.moveLeft()
+        sut.buildStructure(mockArmyType)
+
+        sut.moveLeft()
+        sut.buildStructure(mockArmyType)
+
+        sut.moveUp()
+        sut.buildStructure(mockArmyType)
+
         expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
 
@@ -258,6 +279,7 @@ describe('Grid', () => {
         const sut = new Grid(mockWindow, 1, 1)
 
         sut.buildStructure(mockDefenseType)
+
         expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
 
@@ -346,6 +368,7 @@ describe('Grid', () => {
         expect(sut.buildStructure(mockProducerType)).toBeTruthy()
         sut.getTiles()[1].destroyStructure()
 
+        // can't build on top-right corner
         sut.moveRight()
         expect(sut.buildStructure(mockProducerType)).toBeFalsy()
 
@@ -353,6 +376,7 @@ describe('Grid', () => {
         expect(sut.buildStructure(mockProducerType)).toBeTruthy()
         sut.getTiles()[5].destroyStructure()
 
+        // can't build on bottom-right corner
         sut.moveDown()
         expect(sut.buildStructure(mockProducerType)).toBeFalsy()
 
@@ -360,11 +384,11 @@ describe('Grid', () => {
         expect(sut.buildStructure(mockProducerType)).toBeTruthy()
         sut.getTiles()[7].destroyStructure()
 
+        // can't build on bottom-left corner
         sut.moveLeft()
         expect(sut.buildStructure(mockProducerType)).toBeFalsy()
 
         sut.moveUp()
         expect(sut.buildStructure(mockProducerType)).toBeTruthy()
-        sut.getTiles()[3].destroyStructure()
     })
 })

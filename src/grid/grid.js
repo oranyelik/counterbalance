@@ -199,7 +199,7 @@ class Grid {
 
         // bottom left corner
         potentialTileIndex = damagingTileIndex + this.width - 1
-        if (potentialTileIndex % this.width === (damagingTileIndex % this.width) - 1 && potentialTileIndex <= this.tiles.length) {
+        if (potentialTileIndex % this.width === (damagingTileIndex % this.width) - 1 && potentialTileIndex < this.tiles.length) {
             const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {
@@ -225,7 +225,7 @@ class Grid {
 
         // bottom right corner
         potentialTileIndex = damagingTileIndex + this.width + 1
-        if (potentialTileIndex % this.width === (damagingTileIndex % this.width) + 1 && potentialTileIndex <= this.tiles.length) {
+        if (potentialTileIndex % this.width === (damagingTileIndex % this.width) + 1 && potentialTileIndex < this.tiles.length) {
             const potentialTile = this.tiles[potentialTileIndex]
 
             if (potentialTile.health && potentialTile.isEnemy == targetEnemyStatus) {

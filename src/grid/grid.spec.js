@@ -31,7 +31,8 @@ describe('Grid', () => {
         },
         getGold: () => this.gold,
         getArmyDamage: () => mockArmyType.damage,
-        getGoldProduction: () => mockProducerType.production * ((mockResearcherType.boost * mockPlayer.mockResearchTileLength) || 1)
+        getGoldProduction: () => mockProducerType.production * ((mockResearcherType.boost * mockPlayer.mockResearchTileLength) || 1),
+        getStructureHealthMultiplier: () => 1
     }
     const mockEnemy = {
         isEnemy: true,
@@ -40,7 +41,8 @@ describe('Grid', () => {
         },
         getGold: () => this.enemyGold,
         getArmyDamage: () => mockArmyType.damage,
-        getGoldProduction: () => mockProducerType.production
+        getGoldProduction: () => mockProducerType.production,
+        getStructureHealthMultiplier: () => 1
     }
 
     const mockPlayers = [mockPlayer, mockEnemy]
@@ -94,22 +96,22 @@ describe('Grid', () => {
 
         const tiles = sut.getTiles()
 
-        sut.buildStructure(mockDefenseType)
+        sut.buildStructure(mockDefenseType, mockPlayer)
         sut.moveUp()
         expect(tiles[0].selected).toBe(true)
 
         sut.moveRight()
-        sut.buildStructure(mockDefenseType)
+        sut.buildStructure(mockDefenseType, mockPlayer)
         sut.moveRight()
         expect(tiles[1].selected).toBe(true)
 
         sut.moveDown()
-        sut.buildStructure(mockDefenseType)
+        sut.buildStructure(mockDefenseType, mockPlayer)
         sut.moveDown()
         expect(tiles[3].selected).toBe(true)
 
         sut.moveLeft()
-        sut.buildStructure(mockDefenseType)
+        sut.buildStructure(mockDefenseType, mockPlayer)
         sut.moveLeft()
         expect(tiles[2].selected).toBe(true)
     })
@@ -118,14 +120,14 @@ describe('Grid', () => {
         const sut = new Grid(mockWindow, 2, 2)
 
         const tiles = sut.getTiles()
-        sut.buildStructure(mockDefenseType)
+        sut.buildStructure(mockDefenseType, mockPlayer)
         expect(tiles[0].selected).toBe(true)
 
         sut.moveRight()
         expect(tiles[0].selected).toBe(false)
         expect(tiles[1].selected).toBe(true)
 
-        sut.buildStructure(mockDefenseType)
+        sut.buildStructure(mockDefenseType, mockPlayer)
         sut.moveDown()
         expect(tiles[1].selected).toBe(false)
         expect(tiles[3].selected).toBe(true)
@@ -142,13 +144,13 @@ describe('Grid', () => {
     it('should build producer on selected tile', () => {
         const sut = new Grid(mockWindow, 2, 1)
 
-        sut.getTiles()[0].buildStructure({})
+        sut.getTiles()[0].buildStructure({}, mockPlayer)
         sut.moveRight()
 
-        const firstAttemptResult = sut.buildStructure({})
+        const firstAttemptResult = sut.buildStructure({}, mockPlayer)
         expect(firstAttemptResult).toBeTruthy()
 
-        const secondAttemptResult = sut.buildStructure({})
+        const secondAttemptResult = sut.buildStructure({}, mockPlayer)
         expect(secondAttemptResult).toBeFalsy()
     })
 
@@ -158,7 +160,7 @@ describe('Grid', () => {
         sut.update(mockPlayers)
         expect(mockPlayers[0].getGold()).toBe(0)
 
-        sut.getTiles()[0].buildStructure(mockProducerType)
+        sut.getTiles()[0].buildStructure(mockProducerType, mockPlayer)
 
         sut.update(mockPlayers)
         expect(mockPlayers[0].getGold()).toBe(0)
@@ -175,7 +177,7 @@ describe('Grid', () => {
         expect(mockPlayers[0].getGold()).toBe(0)
         expect(mockPlayers[1].getGold()).toBe(0)
 
-        sut.getTiles()[0].buildStructure(mockProducerType, true)
+        sut.getTiles()[0].buildStructure(mockProducerType, mockEnemy)
 
         // mockWindow has frameRate of 1
         mockWindow.frameCount += mockProducerType.buildTime
@@ -190,39 +192,39 @@ describe('Grid', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
         // 0, 0
-        sut.getTiles()[0].buildStructure(mockProducerType)
+        sut.getTiles()[0].buildStructure(mockProducerType, mockPlayer)
 
         // 1, 0
         sut.moveRight()
-        sut.buildStructure(mockProducerType)
+        sut.buildStructure(mockProducerType, mockPlayer)
 
         // 2, 0
         sut.moveRight()
-        sut.buildStructure(mockProducerType)
+        sut.buildStructure(mockProducerType, mockPlayer)
 
         // 2, 1
         sut.moveDown()
-        sut.buildStructure(mockProducerType)
+        sut.buildStructure(mockProducerType, mockPlayer)
 
         // 2, 2
         sut.moveDown()
-        sut.buildStructure(mockProducerType)
+        sut.buildStructure(mockProducerType, mockPlayer)
 
         // 1, 2
         sut.moveLeft()
-        sut.buildStructure(mockProducerType)
+        sut.buildStructure(mockProducerType, mockPlayer)
 
         // 0, 2
         sut.moveLeft()
-        sut.buildStructure(mockProducerType)
+        sut.buildStructure(mockProducerType, mockPlayer)
 
         // 0, 1
         sut.moveUp()
-        sut.buildStructure(mockProducerType)
+        sut.buildStructure(mockProducerType, mockPlayer)
 
         // 1, 1 (middle tile, enemy tile)
         sut.moveRight()
-        sut.getTiles()[4].buildStructure(mockArmyType, true)
+        sut.getTiles()[4].buildStructure(mockArmyType, mockEnemy)
 
         sut.update(mockPlayers)
 
@@ -240,7 +242,7 @@ describe('Grid', () => {
     it('should handle having no adjacent tiles to damage', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.getTiles()[4].buildStructure(mockArmyType)
+        sut.getTiles()[4].buildStructure(mockArmyType, mockPlayer)
 
         expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
@@ -248,29 +250,29 @@ describe('Grid', () => {
     it('should handle army tiles around edges', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.getTiles()[0].buildStructure(mockArmyType)
+        sut.getTiles()[0].buildStructure(mockArmyType, mockPlayer)
         sut.moveRight()
 
-        sut.buildStructure(mockArmyType)
+        sut.buildStructure(mockArmyType, mockPlayer)
         sut.moveRight()
 
-        sut.buildStructure(mockArmyType)
+        sut.buildStructure(mockArmyType, mockPlayer)
         sut.moveRight()
 
         sut.moveDown()
-        sut.buildStructure(mockArmyType)
+        sut.buildStructure(mockArmyType, mockPlayer)
 
         sut.moveDown()
-        sut.buildStructure(mockArmyType)
+        sut.buildStructure(mockArmyType, mockPlayer)
 
         sut.moveLeft()
-        sut.buildStructure(mockArmyType)
+        sut.buildStructure(mockArmyType, mockPlayer)
 
         sut.moveLeft()
-        sut.buildStructure(mockArmyType)
+        sut.buildStructure(mockArmyType, mockPlayer)
 
         sut.moveUp()
-        sut.buildStructure(mockArmyType)
+        sut.buildStructure(mockArmyType, mockPlayer)
 
         expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
@@ -278,7 +280,7 @@ describe('Grid', () => {
     it('should handle having no tile interactions', () => {
         const sut = new Grid(mockWindow, 1, 1)
 
-        sut.buildStructure(mockDefenseType)
+        sut.buildStructure(mockDefenseType, mockPlayer)
 
         expect(() => { sut.update(mockPlayers) }).not.toThrow()
     })
@@ -286,9 +288,9 @@ describe('Grid', () => {
     it('should destroy a building at 0 health', () => {
         const sut = new Grid(mockWindow, 2, 1)
 
-        sut.getTiles()[0].buildStructure(mockArmyType)
+        sut.getTiles()[0].buildStructure(mockArmyType, mockPlayer)
         sut.moveRight()
-        sut.getTiles()[1].buildStructure(mockDefenseType, true)
+        sut.getTiles()[1].buildStructure(mockDefenseType, mockEnemy)
 
         expect(sut.getTiles()[1].type).toBe(mockDefenseType)
 
@@ -301,9 +303,9 @@ describe('Grid', () => {
     it('should not damage adjacent allied tiles', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.getTiles()[0].buildStructure(mockDefenseType)
+        sut.getTiles()[0].buildStructure(mockDefenseType, mockPlayer)
         sut.moveRight()
-        sut.buildStructure(mockArmyType)
+        sut.buildStructure(mockArmyType, mockPlayer)
 
         sut.update(mockPlayers)
 
@@ -313,10 +315,10 @@ describe('Grid', () => {
     it('should use research structures to boost production', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.getTiles()[0].buildStructure(mockProducerType)
+        sut.getTiles()[0].buildStructure(mockProducerType, mockPlayer)
 
         sut.moveRight()
-        sut.buildStructure(mockResearcherType)
+        sut.buildStructure(mockResearcherType, mockPlayer)
         mockPlayer.mockResearchTileLength++
 
         mockWindow.frameCount += mockProducerType.buildTime
@@ -329,7 +331,7 @@ describe('Grid', () => {
     it('should not add researcher to boost if already there', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.getTiles()[0].buildStructure(mockResearcherType)
+        sut.getTiles()[0].buildStructure(mockResearcherType, mockPlayer)
 
         sut.update(mockPlayers)
         sut.update(mockPlayers)
@@ -340,13 +342,13 @@ describe('Grid', () => {
     it('should not add boost for destroyed research structure', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
-        sut.getTiles()[0].buildStructure(mockResearcherType)
+        sut.getTiles()[0].buildStructure(mockResearcherType, mockPlayer)
 
         sut.update(mockPlayers)
         expect(mockPlayer.researcherTileIndicies.length).toBe(1)
 
         sut.moveRight()
-        sut.getTiles()[1].buildStructure(mockArmyType, true)
+        sut.getTiles()[1].buildStructure(mockArmyType, mockEnemy)
 
         sut.update(mockPlayers)
 
@@ -359,36 +361,36 @@ describe('Grid', () => {
         const sut = new Grid(mockWindow, 3, 3)
 
         // start with structure in the middle
-        sut.getTiles()[4].buildStructure(mockProducerType)
+        sut.getTiles()[4].buildStructure(mockProducerType, mockPlayer)
 
         // can't build on top-left corner
-        expect(sut.buildStructure(mockProducerType)).toBeFalsy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeFalsy()
 
         sut.moveRight()
-        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeTruthy()
         sut.getTiles()[1].destroyStructure()
 
         // can't build on top-right corner
         sut.moveRight()
-        expect(sut.buildStructure(mockProducerType)).toBeFalsy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeFalsy()
 
         sut.moveDown()
-        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeTruthy()
         sut.getTiles()[5].destroyStructure()
 
         // can't build on bottom-right corner
         sut.moveDown()
-        expect(sut.buildStructure(mockProducerType)).toBeFalsy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeFalsy()
 
         sut.moveLeft()
-        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeTruthy()
         sut.getTiles()[7].destroyStructure()
 
         // can't build on bottom-left corner
         sut.moveLeft()
-        expect(sut.buildStructure(mockProducerType)).toBeFalsy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeFalsy()
 
         sut.moveUp()
-        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeTruthy()
     })
 })

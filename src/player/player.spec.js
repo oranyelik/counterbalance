@@ -50,7 +50,7 @@ describe('Player', () => {
         sut.addGold(10)
         sut.build(mockStructure, mockGrid)
 
-        expect(mockGrid.buildStructure).toHaveBeenCalledWith(mockStructure, true)
+        expect(mockGrid.buildStructure).toHaveBeenCalledWith(mockStructure, sut)
     })
 
     it('should have regular gold production with no researchers', () => {
@@ -87,15 +87,25 @@ describe('Player', () => {
         expect(sut.getArmyDamage()).toBe(TileTypes.army.damage)
     })
 
-    it('should have boosted army damage with 1 researcher', () => {
+    it('should have boosted army damage with researchers', () => {
         const sut = new Player()
         const mockGrid = {
             buildStructure: jest.fn((() => true))
         }
 
-        sut.build({}, mockGrid)
+        sut.researcherTileIndicies.push({})
         sut.researcherTileIndicies.push({})
 
-        expect(sut.getArmyDamage()).toBe(TileTypes.army.damage * TileTypes.research.boost)
+        expect(sut.getArmyDamage()).toBe(TileTypes.army.damage * (TileTypes.research.boost * 2))
+        expect(sut.getStructureHealthMultiplier()).toBe(TileTypes.research.boost * 2)
+    })
+
+    it('should return a health multiplier of 1 with no researchers', () => {
+        const sut = new Player()
+        const mockGrid = {
+            buildStructure: jest.fn((() => true))
+        }
+
+        expect(sut.getStructureHealthMultiplier()).toBe(1)
     })
 })

@@ -7,17 +7,15 @@ class Tile {
         this.y = y
     }
 
-    buildStructure(buildingType, isEnemy) {
+    buildStructure(buildingType, player) {
         if (this.type)
             return false
 
         this.buildingCompleteFrame = this.windowObj.frameCount + (this.windowObj.frameRate() * buildingType.buildTime)
 
-        if (isEnemy) {
-            this.isEnemy = isEnemy
-        }
-
-        this.health = buildingType.health
+        this.isEnemy = player.isEnemy
+        this.totalHealth = buildingType.health * player.getStructureHealthMultiplier()
+        this.health = this.totalHealth
 
         return this.type = buildingType
     }
@@ -27,6 +25,7 @@ class Tile {
         this.buildingCompleteFrame = undefined
         this.isEnemy = undefined
         this.health = undefined
+        this.totalHealth
     }
 
     select() {
@@ -65,7 +64,7 @@ class Tile {
             this.windowObj.stroke('#000')
             this.windowObj.line(this.x + 2, this.y + 2, this.x + TileSize - 2, this.y + 2)
 
-            const healthPercent = this.health / this.type.health
+            const healthPercent = this.health / this.totalHealth
             const lineLength = (TileSize - 2) * healthPercent
 
             this.windowObj.strokeWeight(1)

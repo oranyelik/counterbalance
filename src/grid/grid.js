@@ -18,11 +18,11 @@ class Grid {
         this.selectedTileIndex = 0
     }
 
-    buildStructure(type, isEnemy) {
-        if (!this.isSelectedTileAdjacentToPlayerTile(isEnemy))
+    buildStructure(type, player) {
+        if (!this.isSelectedTileAdjacentToPlayerTile(player.isEnemy))
             return false
 
-        return this.tiles[this.selectedTileIndex].buildStructure(type, isEnemy)
+        return this.tiles[this.selectedTileIndex].buildStructure(type, player)
     }
 
     getTiles() {
@@ -109,18 +109,18 @@ class Grid {
             if (this.windowObj.frameCount < tile.buildingCompleteFrame)
                 continue
 
-            if (tile.type.production) {
+            if (tile.type.boost) {
+                if (player.researcherTileIndicies.indexOf(i) === -1) {
+                    player.researcherTileIndicies.push(i)
+                }
+            }
+            else if (tile.type.production) {
                 const goldToBeAdded = player.getGoldProduction()
                 player.addGold(goldToBeAdded)
             }
             else if (tile.type.damage) {
                 const damageToBeApplied = player.getArmyDamage()
                 this.applyDamage(i, damageToBeApplied, opponent)
-            }
-            else if (tile.type.boost) {
-                if (player.researcherTileIndicies.indexOf(i) === -1) {
-                    player.researcherTileIndicies.push(i)
-                }
             }
         }
     }

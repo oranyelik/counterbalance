@@ -1,6 +1,14 @@
 const Tile = require('./tile').Tile
 
 describe('Tile', () => {
+    const mockPlayer = {
+        isEnemy: false,
+        getStructureHealthMultiplier: () => 2
+    }
+    const mockEnemy = {
+        isEnemy: true,
+        getStructureHealthMultiplier: () => 2
+    }
     let mockWindow
 
     beforeEach(() => {
@@ -27,22 +35,22 @@ describe('Tile', () => {
         }
         const sut = new Tile(mockWindow)
 
-        expect(sut.buildStructure(mockProducerType)).toBeTruthy()
+        expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeTruthy()
     })
 
     it('should not build producer if building already exists', () => {
         const sut = new Tile(mockWindow)
 
-        sut.buildStructure({})
+        sut.buildStructure({}, mockPlayer)
 
-        expect(sut.buildStructure({})).toBeFalsy()
+        expect(sut.buildStructure({}, mockPlayer)).toBeFalsy()
     })
 
     it('should be a different color once producer is built', () => {
         const sut = new Tile(mockWindow)
         sut.show()
 
-        sut.buildStructure({})
+        sut.buildStructure({}, mockPlayer)
         sut.show()
 
         expect(mockWindow.fill).toHaveBeenCalledTimes(2)
@@ -77,7 +85,7 @@ describe('Tile', () => {
         }
         const sut = new Tile(mockWindow)
 
-        sut.buildStructure(mockStructureType)
+        sut.buildStructure(mockStructureType, mockPlayer)
         sut.show()
         sut.show()
 
@@ -98,7 +106,7 @@ describe('Tile', () => {
         }
         const sut = new Tile(mockWindow)
 
-        sut.buildStructure(mockStructureType)
+        sut.buildStructure(mockStructureType, mockPlayer)
 
         sut.show()
         mockWindow.frameCount += 1
@@ -135,7 +143,7 @@ describe('Tile', () => {
         }
         const sut = new Tile(mockWindow)
 
-        sut.buildStructure(mockStructureType)
+        sut.buildStructure(mockStructureType, mockPlayer)
 
         sut.show()
         expect(mockWindow.text).not.toHaveBeenCalled()
@@ -149,7 +157,7 @@ describe('Tile', () => {
         }
         const sut = new Tile(mockWindow)
 
-        sut.buildStructure(mockStructureType, true)
+        sut.buildStructure(mockStructureType, mockEnemy)
 
         sut.show()
         expect(mockWindow.text).toHaveBeenCalled()
@@ -166,12 +174,25 @@ describe('Tile', () => {
         sut.show()
         expect(mockWindow.line).not.toHaveBeenCalled()
 
-        sut.buildStructure(mockStructureType)
+        sut.buildStructure(mockStructureType, mockPlayer)
         sut.show()
         expect(mockWindow.line).toHaveBeenCalledTimes(2)
 
         mockWindow.frameCount += 1
         sut.show()
         expect(mockWindow.line).toHaveBeenCalledTimes(4)
+    })
+
+    it('should increase health if player has boost multiplier', () => {
+        const mockStructureType = {
+            health: 5,
+            buildTime: 1,
+            color: ''
+        }
+        const sut = new Tile(mockWindow)
+
+        sut.buildStructure(mockStructureType, mockPlayer)
+
+        expect(sut.health).toBe(mockStructureType.health * mockPlayer.getStructureHealthMultiplier())
     })
 })

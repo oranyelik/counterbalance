@@ -28,6 +28,6 @@ module.exports.Types = Object.freeze({
         cost: 110,
         buildTime: 14,
         health: 90,
-        boost: 1.4
+        boost: 1.3
     }
 })

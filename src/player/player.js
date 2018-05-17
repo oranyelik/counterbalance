@@ -20,7 +20,7 @@ class Player {
     }
 
     build(structure, buildableGrid) {
-        if (this.gold >= structure.cost && buildableGrid.buildStructure(structure, this.isEnemy)) {
+        if (this.gold >= structure.cost && buildableGrid.buildStructure(structure, this)) {
             this.gold -= structure.cost
             this.numStructures++
 
@@ -51,6 +51,13 @@ class Player {
         else {
             return TileTypes.army.damage
         }
+    }
+
+    getStructureHealthMultiplier() {
+        if (!this.researcherTileIndicies.length)
+            return 1
+
+        return TileTypes.research.boost * this.researcherTileIndicies.length
     }
 }
 

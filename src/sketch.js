@@ -13,14 +13,14 @@ window.setup = () => {
     createCanvas(600, 450)
     frameRate(framesPerSecond)
 
-    playableGrid = new Grid(window, 20, 20)
+    playableGrid = new Grid(window, 10, 10)
     players[0] = new Player()
     players[1] = new Player(true)
 
     const tiles = playableGrid.getTiles()
 
-    tiles[0].buildStructure(Types.producer)
-    tiles[tiles.length - 1].buildStructure(Types.producer, true)
+    tiles[0].buildStructure(Types.producer, players[0])
+    tiles[tiles.length - 1].buildStructure(Types.producer, players[1])
 
     players[0].addGold(250)
     players[1].addGold(250)

@@ -16,6 +16,7 @@ class Tile {
         this.isEnemy = player.isEnemy
         this.totalHealth = buildingType.health * player.getStructureHealthMultiplier()
         this.health = this.totalHealth
+        this.owner = player
 
         return this.type = buildingType
     }

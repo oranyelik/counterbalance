@@ -7,6 +7,7 @@ class Grid {
         this.width = width
         this.height = height
         this.tiles = []
+        this.tilesToBeDestroyed = []
 
         for (let i = 0; i < width; i++) {
             for (let j = 0; j < height; j++) {
@@ -123,6 +124,17 @@ class Grid {
                 this.applyDamage(i, damageToBeApplied, opponent)
             }
         }
+
+        // clean up any destroyed structures on each update tick AFTER we've applied damage across the board
+        for (const destroyed of this.tilesToBeDestroyed) {
+            destroyed.tile.destroyStructure()
+
+            destroyed.tile.owner.numStructures--
+            destroyed.tile.owner.researcherTileIndicies
+                = destroyed.tile.owner.researcherTileIndicies.filter(e => e !== destroyed.index)
+        }
+
+        this.tilesToBeDestroyed = []
     }
 
     applyDamage(damagingTileIndex, nearbyTileDamage, playerTakingDamage) {
@@ -132,11 +144,7 @@ class Grid {
             damagedTile.tile.health -= nearbyTileDamage
 
             if (damagedTile.tile.health <= 0) {
-                damagedTile.tile.destroyStructure()
-
-                playerTakingDamage.numStructures--
-                playerTakingDamage.researcherTileIndicies
-                    = playerTakingDamage.researcherTileIndicies.filter(e => e !== damagedTile.index)
+                this.tilesToBeDestroyed.push(damagedTile)
             }
         }
     }

@@ -393,4 +393,24 @@ describe('Grid', () => {
         sut.moveUp()
         expect(sut.buildStructure(mockProducerType, mockPlayer)).toBeTruthy()
     })
+
+    it('should destroy both buildings if they are built at the same time', () => {
+        const mockWeakArmyType = {
+            cost: 0,
+            buildTime: 0,
+            health: 20,
+            damage: 20
+        }
+        const sut = new Grid(mockWindow, 2, 1)
+
+        sut.getTiles()[0].buildStructure(mockWeakArmyType, mockPlayer)
+        sut.getTiles()[1].buildStructure(mockWeakArmyType, mockEnemy)
+
+        sut.update(mockPlayers)
+
+        expect(sut.getTiles()[0].health).toBe(undefined)
+        expect(sut.getTiles()[0].type).toBe(undefined)
+        expect(sut.getTiles()[1].health).toBe(undefined)
+        expect(sut.getTiles()[1].type).toBe(undefined)
+    })
 })

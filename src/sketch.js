@@ -13,7 +13,7 @@ window.setup = () => {
     createCanvas(600, 450)
     frameRate(framesPerSecond)
 
-    playableGrid = new Grid(window, 10, 10)
+    playableGrid = new Grid(window, 5, 5)
     players[0] = new Player()
     players[1] = new Player(true)
 

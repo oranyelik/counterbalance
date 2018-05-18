@@ -19,11 +19,11 @@ class Grid {
         this.selectedTileIndex = 0
     }
 
-    buildStructure(type, player) {
-        if (!this.isSelectedTileAdjacentToPlayerTile(player.isEnemy))
+    buildStructure(type, player, tileIndex = this.selectedTileIndex) {
+        if (!this.isTileAdjacentToPlayerTile(tileIndex, player.isEnemy))
             return false
 
-        return this.tiles[this.selectedTileIndex].buildStructure(type, player)
+        return this.tiles[tileIndex].buildStructure(type, player)
     }
 
     getTiles() {
@@ -65,11 +65,11 @@ class Grid {
         }
     }
 
-    isSelectedTileAdjacentToPlayerTile(isEnemy) {
-        const above = this.selectedTileIndex - this.width
-        const right = this.selectedTileIndex + 1
-        const below = this.selectedTileIndex + this.width
-        const left = this.selectedTileIndex - 1
+    isTileAdjacentToPlayerTile(tileIndex, isEnemy) {
+        const above = tileIndex - this.width
+        const right = tileIndex + 1
+        const below = tileIndex + this.width
+        const left = tileIndex - 1
 
         if (above >= 0) {
             if (this.tiles[above].type !== undefined && this.tiles[above].isEnemy === isEnemy) {
@@ -77,7 +77,7 @@ class Grid {
             }
         }
 
-        if (right < this.tiles.length) {
+        if (right < this.tiles.length && right % this.width > tileIndex % this.width) {
             if (this.tiles[right].type !== undefined && this.tiles[right].isEnemy === isEnemy) {
                 return true
             }
@@ -89,7 +89,7 @@ class Grid {
             }
         }
 
-        if (left >= 0) {
+        if (left >= 0 && left % this.width < tileIndex % this.width) {
             if (this.tiles[left].type !== undefined && this.tiles[left].isEnemy === isEnemy) {
                 return true
             }

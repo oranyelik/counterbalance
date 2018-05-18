@@ -50,7 +50,7 @@ describe('Player', () => {
         sut.addGold(10)
         sut.build(mockStructure, mockGrid)
 
-        expect(mockGrid.buildStructure).toHaveBeenCalledWith(mockStructure, sut)
+        expect(mockGrid.buildStructure).toHaveBeenCalled()
     })
 
     it('should have regular gold production with no researchers', () => {

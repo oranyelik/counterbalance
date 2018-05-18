@@ -154,6 +154,33 @@ describe('Grid', () => {
         expect(secondAttemptResult).toBeFalsy()
     })
 
+    it('should not allow you to build on leftmost tiles because of structures on rightmost tiles', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        // start with a structure at 2nd row, 3rd column
+        sut.getTiles()[5].buildStructure({}, mockPlayer)
+
+        // move down twice from starting position 0
+        sut.moveDown()
+        sut.moveDown()
+
+        expect(sut.buildStructure({}, mockPlayer)).toBeFalsy()
+    })
+
+    it('should not allow you to build on rightmost tiles because of structures on leftmost tiles', () => {
+        const sut = new Grid(mockWindow, 3, 3)
+
+        // start with a structure at 3nd row, 1st column
+        sut.getTiles()[6].buildStructure({}, mockPlayer)
+
+        // move right twice and down once from starting position 0
+        sut.moveRight()
+        sut.moveRight()
+        sut.moveDown()
+
+        expect(sut.buildStructure({}, mockPlayer)).toBeFalsy()
+    })
+
     it('should only add player gold after producer finishes construction', () => {
         const sut = new Grid(mockWindow, 1, 1)
 

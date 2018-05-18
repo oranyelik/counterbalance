@@ -19,8 +19,8 @@ class Player {
         return this.gold
     }
 
-    build(structure, buildableGrid) {
-        if (this.gold >= structure.cost && buildableGrid.buildStructure(structure, this)) {
+    build(structure, buildableGrid, tileIndex) {
+        if (this.gold >= structure.cost && buildableGrid.buildStructure(structure, this, tileIndex)) {
             this.gold -= structure.cost
             this.numStructures++
 

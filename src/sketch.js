@@ -3,17 +3,18 @@ import { TileSize } from './tile/tile'
 import { Grid } from './grid/grid'
 import { Types } from './tile/types'
 import { Player } from './player/player'
+import { AI } from './player/ai'
 
 const framesPerSecond = 10
 
-let playableGrid
+let opponent, playableGrid
 const players = []
 
 window.setup = () => {
     createCanvas(600, 450)
     frameRate(framesPerSecond)
 
-    playableGrid = new Grid(window, 5, 5)
+    playableGrid = new Grid(window, 20, 20)
     players[0] = new Player()
     players[1] = new Player(true)
 
@@ -24,6 +25,8 @@ window.setup = () => {
 
     players[0].addGold(250)
     players[1].addGold(250)
+
+    opponent = new AI(players[1], playableGrid)
 }
 
 window.draw = () => {
@@ -33,6 +36,7 @@ window.draw = () => {
     showControlsLegend()
 
     if (frameCount % framesPerSecond === 0) {
+        opponent.act()
         playableGrid.update(players)
     }
 

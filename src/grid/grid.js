@@ -129,7 +129,6 @@ class Grid {
         for (const destroyed of this.tilesToBeDestroyed) {
             destroyed.tile.destroyStructure()
 
-            destroyed.tile.owner.numStructures--
             destroyed.tile.owner.researcherTileIndicies
                 = destroyed.tile.owner.researcherTileIndicies.filter(e => e !== destroyed.index)
         }

@@ -55,7 +55,6 @@ class AI {
         const nextStructureIndex = this.queueNextBuildPosition()
 
         if (this.player.build(this.nextStructure, this.grid, nextStructureIndex)) {
-            console.log('structure built at index', nextStructureIndex);
             delete this.nextStructure
         }
     }

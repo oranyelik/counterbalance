@@ -35,17 +35,10 @@ window.draw = () => {
     showPlayerGold()
     showControlsLegend()
 
+    opponent.act()
     if (frameCount % framesPerSecond === 0) {
-        opponent.act()
         playableGrid.update(players)
-    }
-
-    if (players[0].numStructures === 0) {
-        text('Player 2 WINS!', 500, 80, 80, 80)
-        window.noLoop()
-    } else if (players[1].numStructures === 0) {
-        text('Player 1 WINS!', 500, 80, 80, 80)
-        window.noLoop()
+        determineVictor()
     }
 }
 
@@ -77,6 +70,35 @@ window.keyPressed = () => {
         case LEFT_ARROW:
             playableGrid.moveLeft()
             break
+    }
+}
+
+function determineVictor() {
+    let player1Loses = true, player2Loses = true
+
+    const tiles = playableGrid.getTiles()
+
+    for (const tile of tiles) {
+        if (tile.type) {
+            if (tile.isEnemy === undefined) {
+                player1Loses = false
+            }
+            else if (tile.isEnemy) {
+                player2Loses = false
+            }
+
+            if (!player1Loses && !player2Loses) {
+                break
+            }
+        }
+    }
+
+    if (player1Loses) {
+        text('Player 2 WINS!', 500, 80, 80, 80)
+        window.noLoop()
+    } else if (player2Loses) {
+        text('Player 1 WINS!', 500, 80, 80, 80)
+        window.noLoop()
     }
 }
 

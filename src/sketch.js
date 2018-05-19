@@ -6,15 +6,16 @@ import { Player } from './player/player'
 import { AI } from './player/ai'
 
 const framesPerSecond = 10
+const gridSize = 20
 
-let opponent, playableGrid
+let opponent, playableGrid, boardLockupTicks
 const players = []
 
 window.setup = () => {
     createCanvas(600, 450)
     frameRate(framesPerSecond)
 
-    playableGrid = new Grid(window, 20, 20)
+    playableGrid = new Grid(window, gridSize, gridSize)
     players[0] = new Player()
     players[1] = new Player(true)
 
@@ -36,6 +37,7 @@ window.draw = () => {
     showControlsLegend()
 
     opponent.act()
+
     if (frameCount % framesPerSecond === 0) {
         playableGrid.update(players)
         determineVictor()
@@ -74,29 +76,40 @@ window.keyPressed = () => {
 }
 
 function determineVictor() {
-    let player1Loses = true, player2Loses = true
+    let player1TileCount = 0, player2TileCount = 0
 
     const tiles = playableGrid.getTiles()
 
     for (const tile of tiles) {
         if (tile.type) {
-            if (tile.isEnemy === undefined) {
-                player1Loses = false
-            }
-            else if (tile.isEnemy) {
-                player2Loses = false
-            }
-
-            if (!player1Loses && !player2Loses) {
-                break
-            }
+            tile.isEnemy ? player2TileCount++ : player1TileCount++
         }
     }
 
-    if (player1Loses) {
+    if (player1TileCount + player2TileCount === gridSize * gridSize) {
+        boardLockupTicks++
+    }
+    else {
+        boardLockupTicks = 0
+    }
+
+    let player1Loses, player2Loses
+
+    if (boardLockupTicks > 10) {
+        if (player1TileCount >= player2TileCount) {
+            player1Loses = false
+            player2Loses = true
+        }
+        else {
+            player1Loses = true
+            player2Loses = false
+        }
+    }
+
+    if (player1Loses || player1TileCount === 0) {
         text('Player 2 WINS!', 500, 80, 80, 80)
         window.noLoop()
-    } else if (player2Loses) {
+    } else if (player2Loses || player2TileCount === 0) {
         text('Player 1 WINS!', 500, 80, 80, 80)
         window.noLoop()
     }

@@ -4,26 +4,29 @@ class AI {
     constructor(player, grid) {
         this.player = player
         this.grid = grid
+        this.moves = 0
     }
 
     queueNextStructure() {
-        // generates random int 0 - 3
-        const nextStructureSeed = Math.floor(Math.random() * Math.floor(4))
-        let nextStructureType
+        let nextStructureSeed, nextStructureType
 
-        switch (nextStructureSeed) {
-            case 0:
-                nextStructureType = TileTypes.producer
-                break
-            case 1:
-                nextStructureType = TileTypes.defense
-                break
-            case 2:
-                nextStructureType = TileTypes.research
-                break
-            case 3:
-                nextStructureType = TileTypes.army
-                break
+        if (this.moves < 12) {
+            // first ten moves will always build producers to seed economy
+            nextStructureSeed = 0
+        }
+        else {
+            nextStructureSeed = Math.random()
+        }
+
+        if (nextStructureSeed <= 0.3) {
+            nextStructureType = TileTypes.producer
+        }
+        else if (nextStructureSeed <= 0.4) {
+            nextStructureType = TileTypes.defense
+        } else if (nextStructureSeed <= 0.65) {
+            nextStructureType = TileTypes.research
+        } else {
+            nextStructureType = TileTypes.army
         }
 
         this.nextStructure = nextStructureType
@@ -55,6 +58,7 @@ class AI {
         const nextStructureIndex = this.queueNextBuildPosition()
 
         if (this.player.build(this.nextStructure, this.grid, nextStructureIndex)) {
+            this.moves++
             delete this.nextStructure
         }
     }

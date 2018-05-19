@@ -11,7 +11,7 @@ class Player {
     }
 
     addGold(amount) {
-        this.gold += amount
+        this.gold += Math.floor(amount)
     }
 
     getGold() {
@@ -30,20 +30,12 @@ class Player {
     }
 
     getGoldProduction() {
-        const boost = TileTypes.research.boost * this.researcherTileIndicies.length
-
-        if (boost) {
-            return TileTypes.producer.production * boost
-        }
-        else {
-            return TileTypes.producer.production
-        }
+        return TileTypes.producer.production
     }
 
     getArmyDamage() {
-        const boost = TileTypes.research.boost * this.researcherTileIndicies.length
-
-        if (boost) {
+        if (this.researcherTileIndicies.length) {
+            const boost = TileTypes.research.boost * Math.log(this.researcherTileIndicies.length + 1) + 1
             return TileTypes.army.damage * boost
         }
         else {
@@ -52,10 +44,13 @@ class Player {
     }
 
     getStructureHealthMultiplier() {
-        if (!this.researcherTileIndicies.length)
+        if (this.researcherTileIndicies.length) {
+            const boost = TileTypes.research.boost * Math.log(this.researcherTileIndicies.length + 1) + 1
+            return boost
+        }
+        else {
             return 1
-
-        return TileTypes.research.boost * this.researcherTileIndicies.length
+        }
     }
 }
 
